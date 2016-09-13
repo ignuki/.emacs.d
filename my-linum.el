@@ -1,4 +1,6 @@
 (defvar linum-current-line 1 "Current line number.")
+(defvar linum-format-fmt   "" " ")
+(defvar linum-format "" " ")
 
 (defface linum-current-line
   `((t :inherit linum
@@ -28,13 +30,12 @@
          (if (= line linum-current-line)
              'linum-current-line
            'linum)))
-    (concat
-     (propertize (format linum-format-fmt line) 'face face)
-     "")))
+    (propertize (format linum-format-fmt line) 'face face)))
+
 (unless window-system
   (setq linum-format 'linum-format-func))
 
 (add-hook 'find-file-hook (lambda ()
                             (linum-mode 1)))
 (add-hook 'eshell-mode-hook (lambda ()
-                              (linum mode -1)))
+                              (linum-mode -1)))

@@ -8,8 +8,6 @@
   (normal-top-level-add-subdirs-to-load-path))
 (package-initialize)
 
-(unless (package-installed-p 'use-package) ; unless it is already installed
-  (package-refresh-contents) ; updage packages archive
-  (package-install 'use-package)) ; and install the most recent version of use-package
-
-(require 'use-package) ; guess what this one does too ?
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))

@@ -5,3 +5,5 @@ auto-save-list/
 recentf
 themes/
 network-security.data
+*.elc
+*.*~
