@@ -1,4 +1,3 @@
-;; change mode-line color by evil state
 (eval-when-compile (require 'cl))
 (require 'evil)
 (require 'magit)
@@ -39,8 +38,7 @@
     (when bufname
       (when (vc-working-revision bufname)
         (concat (propertize
-                 (format "  %s" (magit-get-current-branch))
-                 'face 'bold)
+                 (format "  %s" (magit-get-current-branch)) 'face 'bold)
                 (format " [%s]" (vc-state bufname)))))))
 
 (setq-default mode-line-format

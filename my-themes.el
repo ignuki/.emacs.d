@@ -31,17 +31,17 @@
  '(term-color-black
    ((t (:foreground "#525252"))))
  '(term-color-red
-   ((t (:foreground "#ff4936"))))
+   ((t (:foreground "#ff6633"))))
  '(term-color-green
-   ((t (:foreground "#bb3627"))))
+   ((t (:foreground "#bf4c26"))))
  '(term-color-yellow
-   ((t (:foreground "#86261c"))))
+   ((t (:foreground "#803319"))))
  '(term-color-blue
-   ((t (:foreground "#0fd9ff"))))
+   ((t (:foreground "#33ddff"))))
  '(term-color-magenta
-   ((t (:foreground "#0ba2be"))))
+   ((t (:foreground "#26a6bf"))))
  '(term-color-cyan
-   ((t (:foreground "#076678"))))
+   ((t (:foreground "#196f80"))))
  '(term-color-white
    ((t (:foreground "#bfbfbf")))))
 

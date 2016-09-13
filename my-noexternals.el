@@ -13,7 +13,6 @@
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1
       scroll-conservatively  10000) ;; keyboard scroll one line at a time
-
 (setq-default indent-tabs-mode nil)
 (setq tab-width 2)
 (defvaralias 'c-basic-offset 'tab-width)
