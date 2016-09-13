@@ -1,4 +1,4 @@
-(defvar my:theme 'gruvbox)
+(defvar my:theme 'nothing-rhymes-with-orange)
 (defvar my:theme-window-loaded nil)
 (defvar my:theme-terminal-loaded nil)
 (if (daemonp)

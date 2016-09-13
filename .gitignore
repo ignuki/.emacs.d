@@ -3,7 +3,7 @@ eshell/
 lisp/
 auto-save-list/
 recentf
-themes/
 network-security.data
 *.elc
+themes/*.elc
 *.*~
