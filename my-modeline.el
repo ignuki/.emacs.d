@@ -37,8 +37,7 @@
   (let ((bufname (buffer-file-name (current-buffer))))
     (when bufname
       (when (vc-working-revision bufname)
-        (concat (propertize
-                 (format "  %s" (magit-get-current-branch)) 'face 'bold)
+        (concat (format "  %s" (magit-get-current-branch))
                 (format " [%s]" (vc-state bufname)))))))
 
 (setq-default mode-line-format
@@ -48,8 +47,7 @@
                          ;; left
                          (format-mode-line
                           (concat
-                           (propertize (evil-mode-state)
-                                       'face 'bold)
+                           (evil-mode-state)
                            "[%b] [%*]"
                            (vc-mode-branch-state)))
                          ;; right

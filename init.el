@@ -7,9 +7,10 @@
 
 (byte-compile-init-dir)
 (load "~/.emacs.d/my-loadpackages.elc")
-(add-hook 'after-init-hook '(lambda ()
-                              (load "~/.emacs.d/my-noexternals.elc")
-                              (load "~/.emacs.d/my-setkeys.elc")
-                              (load "~/.emacs.d/my-modeline.elc")
-                              (load "~/.emacs.d/my-linum.elc")
-                              (load "~/.emacs.d/my-themes.elc")))
+(add-hook 'after-init-hook
+          '(lambda ()
+             (load "~/.emacs.d/my-noexternals.elc")
+             (load "~/.emacs.d/my-setkeys.elc")
+             (load "~/.emacs.d/my-modeline.elc")
+             (load "~/.emacs.d/my-linum.elc")
+             (load "~/.emacs.d/my-themes.elc")))

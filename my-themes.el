@@ -8,7 +8,7 @@
        (select-frame frame)
        (when (window-system frame)
          (set-frame-parameter
-          (selected-frame) 'internal-border-width 10)
+          (selected-frame) 'internal-border-width 7)
          (unless my:theme-window-loaded
            (if my:theme-terminal-loaded
                (enable-theme my:theme)
@@ -24,7 +24,7 @@
     (if (display-graphic-p)
         (setq my:theme-window-loaded t)
       (setq my:theme-terminal-loaded t)))
-  (set-frame-parameter (selected-frame) 'internal-border-width 10))
+  (set-frame-parameter (selected-frame) 'internal-border-width 7))
 
 (custom-set-faces
  ;; term

@@ -1,8 +1,11 @@
 (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(add-to-list 'default-frame-alist '(font . "Iosevka Term-10"))
-(set-frame-font "Iosevka Term-10")
+(add-to-list
+ 'default-frame-alist
+ '(font . "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1"))
+(set-frame-font
+ "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1")
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
 (global-auto-revert-mode 1)
@@ -14,7 +17,9 @@
 (setq scroll-step 1
       scroll-conservatively  10000) ;; keyboard scroll one line at a time
 (setq-default indent-tabs-mode nil)
-(setq tab-width 2)
+(setq-default tab-width 2)
+(setq-default c-default-style "linux"
+              c-basic-offset 2)
 (defvaralias 'c-basic-offset 'tab-width)
 (defvaralias 'cperl-indent-level 'tab-width)
 (setq backup-by-copying t      ; don't clobber symlinks
@@ -54,6 +59,10 @@
 
 (add-hook 'term-mode-hook (lambda ()
                             (setq-local global-hl-line-mode nil)))
+
+(defadvice term-handle-exit
+  (after term-kill-buffer-on-exit activate)
+(kill-buffer))
 
 (defun my-term-paste (&optional string)
   (interactive)
