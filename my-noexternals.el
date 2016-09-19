@@ -6,6 +6,14 @@
  '(font . "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1"))
 (set-frame-font
  "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1")
+
+;; (set-face-background 'mode-line "#181818")
+;; (set-face-font 'mode-line "Iosevka Term-10")
+;; (set-face-font 'mode-line-buffer-id "Iosevka Term-10")
+;; (set-face-font 'mode-line-emphasis "Iosevka Term-10")
+;; (set-face-font 'mode-line-highlight "Iosevka Term-10")
+;; (set-face-font 'mode-line-inactive "Iosevka Term-10")
+;; (set-face-foreground 'mode-line "ivory")
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
 (global-auto-revert-mode 1)
@@ -16,6 +24,8 @@
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1
       scroll-conservatively  10000) ;; keyboard scroll one line at a time
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
+(add-to-list 'auto-mode-alist '("\\.zsh\\'" . sh-mode))
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq-default c-default-style "linux"
@@ -61,8 +71,8 @@
                             (setq-local global-hl-line-mode nil)))
 
 (defadvice term-handle-exit
-  (after term-kill-buffer-on-exit activate)
-(kill-buffer))
+    (after term-kill-buffer-on-exit activate)
+  (kill-buffer))
 
 (defun my-term-paste (&optional string)
   (interactive)

@@ -13,6 +13,7 @@
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(global-set-key [f8] 'neotree-toggle)
 (defun gcm-scroll-down ()
   (interactive)
   (scroll-up 1))

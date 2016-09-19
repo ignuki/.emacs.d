@@ -8,7 +8,7 @@
        (select-frame frame)
        (when (window-system frame)
          (set-frame-parameter
-          (selected-frame) 'internal-border-width 7)
+          (selected-frame) 'internal-border-width 5)
          (unless my:theme-window-loaded
            (if my:theme-terminal-loaded
                (enable-theme my:theme)

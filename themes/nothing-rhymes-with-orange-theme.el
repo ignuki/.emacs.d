@@ -65,8 +65,8 @@
    ;; UI
    `(default                           ((t (:background ,nrwo-bg :foreground ,nrwo-light0))))
    `(cursor                            ((t (:background ,nrwo-light0))))
-   `(mode-line                         ((t (:box nil :background ,nrwo-dark2 :foreground ,nrwo-light2))))
-   `(mode-line-inactive                ((t (:box nil :background ,nrwo-dark1 :foreground ,nrwo-light4))))
+   `(mode-line                         ((t (:box nil :background ,nrwo-bg :foreground "ivory" :font "Iosevka Term-10"))))
+   `(mode-line-inactive                ((t (:box nil :background ,nrwo-dark1 :foreground ,nrwo-light4 :font "Iosevka Term-10"))))
    `(fringe                            ((t (:background ,nrwo-bg))))
    `(linum                             ((t (:background ,nrwo-bg :foreground ,nrwo-dark4))))
    `(hl-line                           ((t (:background ,nrwo-color0))))
@@ -78,15 +78,18 @@
    `(shadow                            ((t (:foreground ,nrwo-dark4))))
 
    ;; Built-in syntax
-   `(font-lock-builtin-face            ((t (:foreground ,nrwo-light0 t))))
+   `(font-lock-builtin-face            ((t (:foreground ,nrwo-color9 t))))
    `(font-lock-constant-face           ((t (:foreground ,nrwo-color10 t))))
    `(font-lock-comment-face            ((t (:foreground ,nrwo-dark4))))
    `(font-lock-function-name-face      ((t (:foreground ,nrwo-color15 ))))
-   `(font-lock-keyword-face            ((t (:foreground ,nrwo-light0 t))))
+   `(font-lock-keyword-face            ((t (:foreground ,nrwo-color10))))
    `(font-lock-string-face             ((t (:foreground ,nrwo-color5))))
    `(font-lock-variable-name-face      ((t (:foreground ,nrwo-color9))))
    `(font-lock-type-face               ((t (:foreground ,nrwo-color12))))
    `(font-lock-warning-face            ((t (:foreground ,nrwo-color15 t))))
+
+   `(neo-dir-link-face                 ((t (:foreground ,nrwo-color10))))
+   `(neo-root-dir-face                 ((t (:foreground ,nrwo-dark4))))
 
    ;; whitespace-mode
    `(whitespace-space                  ((t (:background ,nrwo-bg :foreground ,nrwo-dark4))))
