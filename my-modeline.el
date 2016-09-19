@@ -1,31 +1,38 @@
-(eval-when-compile (require 'cl))
 (require 'evil)
 (require 'magit)
 (require 'all-the-icons)
 
-;; (lexical-let ((default-color (cons (face-background 'mode-line)
-;;                                    (face-foreground 'mode-line))))
-;;   (add-hook 'post-command-hook
-;;             (lambda ()
-;;               (let ((color (cond ((minibufferp) default-color)
-;;                                  ((evil-normal-state-p)
-;;                                   '("#181818" . "ivory"))
-;;                                  ((evil-insert-state-p)
-;;                                   '("firebrick" . "ivory"))
-;;                                  ((evil-visual-state-p)
-;;                                   '("DarkSlateGray" . "ivory"))
-;;                                  ((evil-emacs-state-p)
-;;                                   '("SeaGreen" . "ivory"))
-;;                                  ((buffer-modified-p)
-;;                                   '("firebrick" . "ivory"))
-;;                                  (t default-color))))
-;;                 (set-face-background 'mode-line (car color))
-;;                 (set-face-font 'mode-line "Iosevka Term-10")
-;;                 (set-face-font 'mode-line-buffer-id "Iosevka Term-10")
-;;                 (set-face-font 'mode-line-emphasis "Iosevka Term-10")
-;;                 (set-face-font 'mode-line-highlight "Iosevka Term-10")
-;;                 (set-face-font 'mode-line-inactive "Iosevka Term-10")
-;;                 (set-face-foreground 'mode-line (cdr color))))))
+(defvar powerline-current-window nil)
+(defun update-current-window (windows)
+  (when (not (minibuffer-window-active-p (frame-selected-window)))
+    (setq powerline-current-window (selected-window))))
+(add-function :before pre-redisplay-function 'update-current-window)
+
+(defun evil-tag-color ()
+  (if (eq (get-buffer-window) powerline-current-window)
+    (cond ((evil-normal-state-p)   "#86261c")
+          ((evil-visual-state-p)   "DarkSlateGray")
+          ((evil-insert-state-p)   "firebrick")
+          ((evil-emacs-state-p)    "SeaGreen")
+          ((evil-operator-state-p) "SeaGreen")
+          ((evil-motion-state-p)   "SeaGreen")
+          ((evil-replace-state-p)  "firebrick"))
+    (face-background 'mode-line-inactive)))
+
+(defun branch-tag-bg-color ()
+  (if (eq (get-buffer-window) powerline-current-window)
+      "#424242"
+    (face-background 'mode-line-inactive)))
+
+(defun time-tag-bg-color ()
+  (if (eq (get-buffer-window) powerline-current-window)
+      "ivory"
+    (face-background 'mode-line-inactive)))
+
+(defun time-tag-fg-color ()
+  (if (eq (get-buffer-window) powerline-current-window)
+      "#181818"
+    (face-foreground 'mode-line-inactive)))
 
 (defun fancy-mode-line-render (left center right &optional lpad rpad)
   "Return a string the width of the current window with
@@ -49,28 +56,23 @@ can be used to add a number of spaces to the front and back of the string."
                   right)))
     (error (format "[%s]: (%s) (%s) (%s)" err left center right))))
 
-
 (defun evil-mode-state ()
-  (cond ((evil-normal-state-p)   (format " NORMAL " ))
-        ((evil-visual-state-p)   (format " VISUAL " ))
-        ((evil-insert-state-p)   (format " INSERT " ))
-        ((evil-emacs-state-p)    (format " EMACS " ))
-        ((evil-operator-state-p) (format " OPERATOR " ))
-        ((evil-motion-state-p)   (format " MOTION " ))
-        ((evil-replace-state-p)  (format " REPLACE " ))))
+  (let ((str (cond ((evil-normal-state-p)   (format " NORMAL " ))
+                   ((evil-visual-state-p)   (format " VISUAL " ))
+                   ((evil-insert-state-p)   (format " INSERT " ))
+                   ((evil-emacs-state-p)    (format " EMACS " ))
+                   ((evil-operator-state-p) (format " OPERATOR " ))
+                   ((evil-motion-state-p)   (format " MOTION " ))
+                   ((evil-replace-state-p)  (format " REPLACE " )))))
+    (propertize str 'face `(:height 1.0 :background ,(evil-tag-color) :weight bold))))
 
 (defun vc-mode-branch-state ()
   (let ((bufname (buffer-file-name (current-buffer))))
     (when bufname
-      (when (vc-working-revision bufname)
-        (concat
-         (propertize (format "  %s" (all-the-icons-octicon "git-branch"))
-                     'face `(:height 1.0
-                                     :family ,(all-the-icons-octicon-family))
-                     'display '(raise 0.0))
-         (format " %s [%s]"
-                 (propertize (magit-get-current-branch) 'face 'bold)
-                 (vc-state bufname)))))))
+      (when (magit-get-current-branch)
+        (propertize (format "  %s " (magit-get-current-branch))
+                    'face `(:weight bold :background ,(branch-tag-bg-color)))))))
+                 ;;(vc-state bufname)))))))
 
 (defun powerline-modified ()
   (let* ((config-alist
@@ -81,8 +83,9 @@ can be used to add a number of spaces to the front and back of the string."
             ("%" all-the-icons-octicon-family
              all-the-icons-octicon "lock" :height 1.2 :v-adjust 0.1)))
          (result (cdr (assoc (format-mode-line "%*") config-alist))))
-    (propertize (apply (cadr result) (cddr result))
-                'face `(:family ,(funcall (car result))))))
+    (let ((res (propertize (apply (cadr result) (cddr result))
+                           'face `(:background ,(evil-tag-color) :family ,(funcall (car result))))))
+      (propertize (format "  %s" res) 'face `(:background ,(evil-tag-color) :family ,(funcall (car result)))))))
 
 (defun custom-modeline-mode-icon ()
   (let ((icon (all-the-icons-icon-for-buffer)))
@@ -102,54 +105,51 @@ can be used to add a number of spaces to the front and back of the string."
        'face `(:height 0.8);; :foreground ,(powerline-fg) :background ,(powerline-c1))
        'display '(raise 0.1)))))
 
-(defun mode-line-fill (reserve)
-  "Return empty space leaving RESERVE space on the right."
-  (unless reserve
-    (setq reserve 20))
-  (when (and window-system (eq 'right (get-scroll-bar-mode)))
-    (setq reserve (- reserve 3)))
-  (propertize " "
-              'display
-              `((space :align-to (- (+ right right-fringe right-margin)
-                                    ,reserve)))))
-
 (defun line-count-line ()
-  (concat (propertize
-           (all-the-icons-faicon "rebel")
-           'face `(:height 0.8 :background "#86261c") 'display '(raise 0.2))
-          (propertize
-           (format " %%l/%d  "
-                   (count-lines (point-min) (point-max)))
-           'face `(:background "#86261c"))))
+  (let* ((bg (time-tag-bg-color))
+         (fg (time-tag-fg-color)))
+    (concat (propertize
+             (all-the-icons-faicon "rebel")
+             'face `(:height 0.8 :background ,bg :foreground ,fg) 'display '(raise 0.2))
+            (propertize
+             (format " %%l/%d  "
+                     (count-lines (point-min) (point-max)))
+             'face `(:background ,bg :foreground ,fg)))))
 
 (defun powerline-time ()
   (let* ((hour (string-to-number (format-time-string "%I")))
-         (icon (all-the-icons-wicon (format "time-%s" hour) :height 1.0 :v-adjust 0.0)))
+         (icon (all-the-icons-wicon (format "time-%s" hour) :height 1.0 :v-adjust 0.0))
+         (bg (time-tag-bg-color))
+         (fg (time-tag-fg-color)))
     (concat
      (propertize (format-time-string " %H:%M ")
-                 'face `(:height 1.0 :background "#86261c"))
+                 'face `(:height 1.0 :background ,bg :foreground ,fg))
      (propertize (format "%s" icon)
-                 'face `(:height 1.0 :family "Weather Icons" :background "#86261c")
+                 'face `(:height 1.0 :family "Weather Icons" :background ,bg :foreground ,fg)
                  'display '(raise -0.0))
-     (propertize " · " 'face `(:height 1.0 :background "#86261c")))))
+     (propertize " · " 'face `(:height 1.0 :background ,bg :foreground ,fg)))))
+
+(defvar separator-left (propertize "" 'face `(:height 1.1 :foreground "#86261c") 'display '(raise -0.0)))
+
+(defvar separator-right (propertize "" 'face `(:height 1.1 :foreground "#86261c") 'display '(raise -0.0)))
 
 (setq-default mode-line-format
               (list
-               mode-line-front-space
                '((:eval (fancy-mode-line-render
                          ;; left
                          (format-mode-line
                           (concat
                            (powerline-modified)
-                           (propertize (evil-mode-state) 'face 'bold)
+                           (evil-mode-state)
+                           (vc-mode-branch-state)
                            (custom-modeline-mode-icon) ;; %m
-                           " %b "
-                           (vc-mode-branch-state)))
+                           " %b "))
                          ;;center
                          " "
                          ;; right
                          (format-mode-line
                           (concat
+                           separator-left
                            ;; (format-time-string "%H:%M ⁃ ")
                            (powerline-time)
                            (line-count-line)))

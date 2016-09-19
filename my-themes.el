@@ -24,7 +24,7 @@
     (if (display-graphic-p)
         (setq my:theme-window-loaded t)
       (setq my:theme-terminal-loaded t)))
-  (set-frame-parameter (selected-frame) 'internal-border-width 7))
+  (set-frame-parameter (selected-frame) 'internal-border-width 5))
 
 (custom-set-faces
  ;; term

@@ -6,7 +6,7 @@
  '(font . "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1"))
 (set-frame-font
  "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1")
-
+(fringe-mode '(0 . 0))
 ;; (set-face-background 'mode-line "#181818")
 ;; (set-face-font 'mode-line "Iosevka Term-10")
 ;; (set-face-font 'mode-line-buffer-id "Iosevka Term-10")
