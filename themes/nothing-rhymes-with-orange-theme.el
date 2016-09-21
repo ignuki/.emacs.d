@@ -8,7 +8,7 @@
   "Contrast level for the theme background."
   :options '(soft medium hard))
 
-(deftheme nothing-rhymes-with-orange "Testt")
+(deftheme nothing-rhymes-with-orange "Test")
 (let* ((nrwo-dark0_hard  (if (display-graphic-p) "#181818" "color-234"))
        (nrwo-dark0       (if (display-graphic-p) "#282828" "color-235"))
        (nrwo-dark0_soft  (if (display-graphic-p) "#32302f" "color-236"))
@@ -34,7 +34,7 @@
        (nrwo-color4     (if (display-graphic-p) "#947e76" "color-4"))
        (nrwo-color5     (if (display-graphic-p) "#a38b83" "color-5"))
        (nrwo-color6     (if (display-graphic-p) "#b89c93" "color-6"))
-       (nrwo-color7     (if (display-graphic-p) "#ccada3" "color-7"))
+       (nrwo-color7     (if (display-graphic-p) "#ede4b1" "color-7"))
        (nrwo-color8     (if (display-graphic-p) "#524b49" "color-8"))
        (nrwo-color9     (if (display-graphic-p) "#ff6633" "color-9"))
        (nrwo-color10    (if (display-graphic-p) "#bf4c26" "color-10"))
@@ -65,7 +65,7 @@
    ;; UI
    `(default                           ((t (:background ,nrwo-bg :foreground ,nrwo-light0))))
    `(cursor                            ((t (:background ,nrwo-light0))))
-   `(mode-line                         ((t (:box nil :background ,nrwo-bg :foreground "ivory" :font "Iosevka Term-10"))))
+   `(mode-line                         ((t (:box nil :background ,nrwo-dark0 :foreground "ivory" :font "Iosevka Term-10"))))
    `(mode-line-inactive                ((t (:box nil :background ,nrwo-dark1 :foreground ,nrwo-light4 :font "Iosevka Term-10"))))
    `(fringe                            ((t (:background ,nrwo-bg))))
    `(linum                             ((t (:background ,nrwo-bg :foreground ,nrwo-dark4))))

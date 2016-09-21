@@ -43,7 +43,7 @@
  '(term-color-cyan
    ((t (:foreground "#196f80"))))
  '(term-color-white
-   ((t (:foreground "#bfbfbf")))))
+   ((t (:foreground "#ede4b1")))))
 
 (add-hook 'before-make-frame-hook
           #'(lambda ()
