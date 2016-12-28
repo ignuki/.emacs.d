@@ -22,7 +22,7 @@
                                             (count-lines
                                              (point-min)
                                              (point-max))))))
-                            (concat "%" (number-to-string w) "d "))))))
+                            (concat " %" (number-to-string w) "d "))))))
 
 
 (defun linum-format-func (line)

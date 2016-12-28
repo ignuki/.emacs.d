@@ -2,27 +2,34 @@
 (require 'magit)
 (require 'all-the-icons)
 
+
 (defvar powerline-current-window nil)
 (defun update-current-window (windows)
   (when (not (minibuffer-window-active-p (frame-selected-window)))
     (setq powerline-current-window (selected-window))))
 (add-function :before pre-redisplay-function 'update-current-window)
 
+
 (defun evil-tag-color ()
   (if (eq (get-buffer-window) powerline-current-window)
-    (cond ((evil-normal-state-p)   "#86261c")
+    (cond ((evil-normal-state-p)   "DodgerBlue4")
           ((evil-visual-state-p)   "DarkSlateGray")
-          ((evil-insert-state-p)   "#ff2222")
+          ((evil-insert-state-p)   "maroon")
           ((evil-emacs-state-p)    "SeaGreen")
           ((evil-operator-state-p) "SeaGreen")
           ((evil-motion-state-p)   "SeaGreen")
-          ((evil-replace-state-p)  "#ff2222"))
+          ((evil-replace-state-p)  "maroon"))
     (face-background 'mode-line-inactive)))
 
 (defun branch-tag-bg-color ()
   (if (eq (get-buffer-window) powerline-current-window)
-      "#424242"
+      "gainsboro"
     (face-background 'mode-line-inactive)))
+
+(defun branch-tag-fg-color ()
+  (if (eq (get-buffer-window) powerline-current-window)
+      "#181818"
+    (face-foreground 'mode-line-inactive)))
 
 (defun time-tag-bg-color ()
   (if (eq (get-buffer-window) powerline-current-window)
@@ -74,7 +81,9 @@ can be used to add a number of spaces to the front and back of the string."
       (when (magit-get-current-branch)
         (propertize
          (format "  %s " (magit-get-current-branch))
-         'face `(:weight bold :background ,(branch-tag-bg-color)))))))
+         'face `(:weight bold
+                         :foreground ,(branch-tag-fg-color)
+                         :background ,(branch-tag-bg-color)))))))
 
 (defun powerline-modified ()
   (let* ((config-alist
@@ -109,19 +118,19 @@ can be used to add a number of spaces to the front and back of the string."
   (let* ((bg (time-tag-bg-color))
          (fg (time-tag-fg-color)))
     (concat
+     ;; (propertize
+     ;;  (all-the-icons-faicon "rebel")
+     ;;  'face
+     ;;  `(:height 0.8 :background ,bg :foreground ,fg) 'display '(raise 0.2))
      (propertize
-      (all-the-icons-faicon "rebel")
-      'face
-      `(:height 0.8 :background ,bg :foreground ,fg) 'display '(raise 0.2))
-     (propertize
-      (format " %%l/%d  "
+      (format " %%l/%d "
               (count-lines (point-min) (point-max)))
       'face `(:background ,bg :foreground ,fg)))))
 
 (defun powerline-time ()
   (let* ((hour (string-to-number (format-time-string "%I")))
-         (icon (all-the-icons-wicon
-                (format "time-%s" hour) :height 1.0 :v-adjust 0.0))
+         ;; (icon (all-the-icons-wicon
+         ;;        (format "time-%s" hour) :height 1.0 :v-adjust 0.0))
          (bg (time-tag-bg-color))
          (fg (time-tag-fg-color)))
     (concat
@@ -129,13 +138,13 @@ can be used to add a number of spaces to the front and back of the string."
       (format-time-string " %H:%M ")
       'face
       `(:height 1.0 :background ,bg :foreground ,fg))
+     ;; (propertize
+     ;;  (format "%s" icon)
+     ;;  'face
+     ;;  `(:height 1.0 :family "Weather Icons" :background ,bg :foreground ,fg)
+     ;;  'display '(raise -0.0))
      (propertize
-      (format "%s" icon)
-      'face
-      `(:height 1.0 :family "Weather Icons" :background ,bg :foreground ,fg)
-      'display '(raise -0.0))
-     (propertize
-      " · "
+      "·"
       'face `(:height 1.0 :background ,bg :foreground ,fg)))))
 
 (defvar separator-left

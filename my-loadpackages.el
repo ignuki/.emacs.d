@@ -1,4 +1,4 @@
-(load "~/.emacs.d/my-packages.elc")
+(load "~/.emacs.d/my-packages.el")
 
 (require 'use-package)
 
@@ -32,3 +32,5 @@
   :init
   (setq fci-rule-column 80))
 (use-package all-the-icons)
+(use-package haskell-mode)
+(use-package ghc)

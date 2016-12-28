@@ -1,11 +1,20 @@
 (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings))
+(autoload 'ghc-init "ghc" nil t)
+(autoload 'ghc-debug "ghc" nil t)
+(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+(add-to-list 'exec-path "~/.cabal/bin")
 (add-to-list
  'default-frame-alist
- '(font . "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1"))
+ '(font . "Iosevka Term 10"))
 (set-frame-font
- "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1")
+ "Iosevka Term 10")
+(setq frame-title-format
+      '(buffer-file-name "%f"
+                         (dired-directory dired-directory "%b")))
 (fringe-mode '(0 . 0))
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
@@ -72,3 +81,16 @@
   (process-send-string
    (get-buffer-process (current-buffer))
    (if string string (current-kill 0))))
+
+(eval-after-load 'haskell-mode '(progn
+  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
+  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
+  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
+  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
+  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)))
+(eval-after-load 'haskell-cabal '(progn
+  (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))

@@ -1,4 +1,4 @@
-(defvar my:theme 'nothing-rhymes-with-orange)
+(defvar my:theme 'base16-default-dark)
 (defvar my:theme-window-loaded nil)
 (defvar my:theme-terminal-loaded nil)
 (if (daemonp)
@@ -8,7 +8,7 @@
        (select-frame frame)
        (when (window-system frame)
          (set-frame-parameter
-          (selected-frame) 'internal-border-width 5)
+          (selected-frame) 'internal-border-width 0)
          (unless my:theme-window-loaded
            (if my:theme-terminal-loaded
                (enable-theme my:theme)
@@ -24,7 +24,7 @@
     (if (display-graphic-p)
         (setq my:theme-window-loaded t)
       (setq my:theme-terminal-loaded t)))
-  (set-frame-parameter (selected-frame) 'internal-border-width 5))
+  (set-frame-parameter (selected-frame) 'internal-border-width 0))
 
 (custom-set-faces
  ;; term
@@ -48,4 +48,4 @@
 (add-hook 'before-make-frame-hook
           #'(lambda ()
               (add-to-list 'default-frame-alist '(height . 42))
-              (add-to-list 'default-frame-alist '(width  . 84))))
+              (add-to-list 'default-frame-alist '(width  . 100))))
