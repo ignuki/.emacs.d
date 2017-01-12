@@ -12,9 +12,9 @@
 
 (defun evil-tag-color ()
   (if (eq (get-buffer-window) powerline-current-window)
-    (cond ((evil-normal-state-p)   "DodgerBlue4")
-          ((evil-visual-state-p)   "DarkSlateGray")
-          ((evil-insert-state-p)   "maroon")
+    (cond ((evil-normal-state-p)   "#5c3f56")
+          ((evil-visual-state-p)   "#446963")
+          ((evil-insert-state-p)   "#ac4142")
           ((evil-emacs-state-p)    "SeaGreen")
           ((evil-operator-state-p) "SeaGreen")
           ((evil-motion-state-p)   "SeaGreen")
