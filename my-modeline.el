@@ -51,12 +51,12 @@ can be used to add a number of spaces to the front and back of the string."
              (width (apply '+ (window-width)
                            (let ((m (window-margins)))
                              (list (or (car m) 0) (or (cdr m) 0)))))
-             (total-length (+ (length left) (length center) (length right) 2)))
+             (total-length (+ (length left) (length center) (length right) 0)))
         (when (> total-length width) (setq left "" right ""))
         (let* ((left-space (/ (- width (length center)) 2))
                (right-space (- width left-space (length center)))
                (lspaces (max (- left-space (length left)) 1))
-               (rspaces (max (- right-space (length right)) 1 0)))
+               (rspaces (max (- right-space (length right)) 0)))
           (concat left (make-string lspaces  ?\s)
                   center
                   (make-string rspaces ?\s)
@@ -106,12 +106,18 @@ can be used to add a number of spaces to the front and back of the string."
 
 (defun custom-modeline-mode-icon ()
   (let ((icon (all-the-icons-icon-for-buffer)))
-    (unless (symbolp icon) ;; This implies it's the major mode
+    (if (not (symbolp icon)) ;; This implies it's the major mode
+        (format " %s"
+                (propertize
+                 icon
+                 'face
+                 `(:height 1.0 :family ,(all-the-icons-icon-family-for-buffer))
+                 'display '(raise 0.0)))
       (format " %s"
               (propertize
-               icon
+               ""
                'face
-               `(:height 1.0 :family ,(all-the-icons-icon-family-for-buffer))
+               `(:height 1.0 :family ,(all-the-icons-faicon-family))
                'display '(raise 0.0))))))
 
 (defun line-count-line ()
