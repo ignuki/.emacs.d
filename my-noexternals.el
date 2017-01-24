@@ -35,8 +35,8 @@
       scroll-conservatively  10000) ;; keyboard scroll one line at a time
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
 (add-to-list 'auto-mode-alist '("\\.zsh\\'" . sh-mode))
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
+(setq-default indent-tabs-mode t)
+(setq-default tab-width 8)
 (setq-default c-default-style "linux"
               c-basic-offset 2)
 (defvaralias 'c-basic-offset 'tab-width)
