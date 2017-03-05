@@ -34,3 +34,5 @@
 (use-package all-the-icons)
 (use-package haskell-mode)
 (use-package ghc)
+
+(use-package web-mode)
