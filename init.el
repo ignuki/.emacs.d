@@ -13,19 +13,22 @@
              (load "~/.emacs.d/my-setkeys.elc")
              (load "~/.emacs.d/my-modeline.elc")
              (load "~/.emacs.d/my-linum.elc")
-             (load "~/.emacs.d/my-themes.elc")))
+             (load "~/.emacs.d/my-themes.elc")
+	     (load "~/.emacs.d/my-gnus.elc")))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(auth-source-save-behavior nil)
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-process-type (quote cabal-repl))
  '(package-selected-packages
    (quote
-    (swiper colemak-evil evil all-the-icons use-package rich-minority projectile mode-icons magit-find-file haskell-mode gruvbox-theme fill-column-indicator evil-magit counsel))))
+    (swiper colemak-evil evil all-the-icons use-package rich-minority projectile mode-icons magit-find-file haskell-mode gruvbox-theme fill-column-indicator evil-magit counsel)))
+ '(send-mail-function (quote smtpmail-send-it)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

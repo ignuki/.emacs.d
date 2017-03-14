@@ -36,3 +36,4 @@
 (use-package ghc)
 
 (use-package web-mode)
+(use-package less-css-mode)
