@@ -4,9 +4,7 @@
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/") t
-(let ((default-directory "~/.emacs.d/lisp/"))
-  (normal-top-level-add-subdirs-to-load-path))
-(package-initialize)
+(add-to-list 'load-path "~/.emacs.d/lisp/" t)
 
 (defvar prelude-packages
   '(all-the-icons async base16-theme bind-chord bind-key counsel dash diminish

@@ -43,6 +43,11 @@
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
+;;    (setq auto-mode-alist
+;;          (append
+;;           '(("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
+;; auto-mode-alist))
 (defun my-web-mode-hook ()
   "Hooks for Web mode."
   (setq web-mode-markup-indent-offset 2)
@@ -92,6 +97,11 @@
 
 (add-hook 'term-mode-hook (lambda ()
                             (setq-local global-hl-line-mode nil)))
+
+;;(setq auto-mode-alist
+;;      (append
+;;       '(("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
+;;       auto-mode-alist))
 
 (defadvice term-handle-exit
     (after term-kill-buffer-on-exit activate)

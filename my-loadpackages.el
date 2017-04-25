@@ -37,3 +37,5 @@
 
 (use-package web-mode)
 (use-package less-css-mode)
+
+(use-package sql)
