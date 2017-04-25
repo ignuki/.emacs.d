@@ -9,24 +9,22 @@
 (package-initialize)
 
 (defvar prelude-packages
-  '(projectile use-package ivy cl evil magit evil-magit fill-column-indicator
-               all-the-icons haskell-mode ghc web-mode less-css-mode base16-emacs)
+  '(all-the-icons async base16-theme bind-chord bind-key counsel dash diminish
+		  epl evil evil-magit fill-column-indicator font-lock ghc git-commit
+		  goto-chg haskell-mode ivy key-chord less-css-mode magit magit-popup
+		  pkg-info projectile swiper undo-tree use-package use-package-chords
+		  web-mode with-editor)
   "A list of packages to ensure are installed at launch.")
 
 (defun prelude-packages-installed-p ()
-  (if (member
-        nil '(mapcar
-              'package-installed-p
-              prelude-packages))
-    nil
+  (if (member nil '(mapcar 'package-installed-p prelude-packages))
+      nil
     t))
 
 (unless (prelude-packages-installed-p)
- check for new packages (package versions)
   (message "%s" "Emacs Prelude is now refreshing its package database...")
   (package-refresh-contents)
   (message "%s" " done.")
- install the missing packages
   (dolist (p prelude-packages)
     (when (not (package-installed-p p))
       (package-install p))))
