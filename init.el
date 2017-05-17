@@ -28,7 +28,7 @@
  '(haskell-process-type (quote cabal-repl))
  '(package-selected-packages
    (quote
-    (swiper colemak-evil evil all-the-icons use-package rich-minority projectile mode-icons magit-find-file haskell-mode gruvbox-theme fill-column-indicator evil-magit counsel)))
+    (counsel-projectile swiper colemak-evil evil all-the-icons use-package rich-minority projectile mode-icons magit-find-file haskell-mode gruvbox-theme fill-column-indicator evil-magit counsel)))
  '(send-mail-function (quote smtpmail-send-it)))
 
 (custom-set-faces

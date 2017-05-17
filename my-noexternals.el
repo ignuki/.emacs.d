@@ -7,16 +7,11 @@
 (autoload 'ghc-debug "ghc" nil t)
 (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
 (add-to-list 'exec-path "~/.cabal/bin")
-;; (add-to-list
-;;  'default-frame-alist
-;;  '(font . "Iosevka Term 10"))
-;; (set-frame-font
-;;  "Iosevka Term 10")
-(add-to-list
- 'default-frame-alist
- '(font . "envypn 15"))
-(set-frame-font
- "envypn 15")
+ (add-to-list
+  'default-frame-alist
+  '(font . "Iosevka Term 10"))
+ (set-frame-font
+  "Iosevka Term 10")
 ;; (set-face-font 'menu "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1")
 ;; (set-face-font 'default "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1")
 (setq frame-title-format
@@ -25,6 +20,7 @@
 (fringe-mode '(0 . 0))
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
+(setq inhibit-compacting-font-caches 1)
 (global-auto-revert-mode 1)
 (electric-pair-mode 1)
 (show-paren-mode t)
