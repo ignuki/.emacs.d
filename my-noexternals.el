@@ -12,16 +12,19 @@
 ;;  '(font . "Iosevka Term 10"))
 ;; (set-frame-font
 ;;  "Iosevka Term 10")
+;; (add-to-list
+;;  'default-frame-alist
+;;  '(font . "envypn 15"))
+;; (set-frame-font
+;;  "envypn 15")
 (add-to-list
  'default-frame-alist
- '(font . "envypn 15"))
+ '(font . "Iosevka Term 10"))
 (set-frame-font
- "envypn 15")
-;; (set-face-font 'menu "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1")
-;; (set-face-font 'default "-ypn-envypn-medium-r-normal--15-150-75-75-c-90-iso8859-1")
+ "Iosevka Term 10")
 (setq frame-title-format
       '(buffer-file-name "%f"
-                         (dired-directory dired-directory "%b")))
+			 (dired-directory dired-directory "%b")))
 (fringe-mode '(0 . 0))
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
@@ -43,7 +46,8 @@
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
+(add-to-list 'auto-mode-alist
+	     '("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
 ;;    (setq auto-mode-alist
 ;;          (append
 ;;           '(("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
@@ -57,7 +61,7 @@
 (setq-default indent-tabs-mode t)
 (setq-default tab-width 8)
 (setq-default c-default-style "linux"
-              c-basic-offset 2)
+	      c-basic-offset 2)
 (defvaralias 'c-basic-offset 'tab-width)
 (defvaralias 'cperl-indent-level 'tab-width)
 (setq backup-by-copying t      ; don't clobber symlinks
@@ -84,19 +88,19 @@
 (defun remove-elc-on-save ()
   "If you're saving an elisp file, likely the .elc is no longer valid."
   (add-hook 'after-save-hook
-            (lambda ()
-              (if (file-exists-p (concat buffer-file-name "c"))
-                  (delete-file (concat buffer-file-name "c"))))
-            nil
-            t))
+	    (lambda ()
+	      (if (file-exists-p (concat buffer-file-name "c"))
+		  (delete-file (concat buffer-file-name "c"))))
+	    nil
+	    t))
 
 (add-hook 'emacs-lisp-mode-hook 'remove-elc-on-save)
 
 (add-hook 'eshell-mode-hook (lambda ()
-                              (setq-local global-hl-line-mode nil)))
+			      (setq-local global-hl-line-mode nil)))
 
 (add-hook 'term-mode-hook (lambda ()
-                            (setq-local global-hl-line-mode nil)))
+			    (setq-local global-hl-line-mode nil)))
 
 ;;(setq auto-mode-alist
 ;;      (append
@@ -113,15 +117,27 @@
    (get-buffer-process (current-buffer))
    (if string string (current-kill 0))))
 
-(eval-after-load 'haskell-mode '(progn
-  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
-  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
-  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
-  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)))
-(eval-after-load 'haskell-cabal '(progn
-  (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
+(eval-after-load 'haskell-mode
+  '(progn
+     (define-key haskell-mode-map (kbd "C-c C-l")
+       'haskell-process-load-or-reload)
+     (define-key haskell-mode-map (kbd "C-c C-z")
+       'haskell-interactive-switch)
+     (define-key haskell-mode-map (kbd "C-c C-n C-t")
+       'haskell-process-do-type)
+     (define-key haskell-mode-map (kbd "C-c C-n C-i")
+       'haskell-process-do-info)
+     (define-key haskell-mode-map (kbd "C-c C-n C-c")
+       'haskell-process-cabal-build)
+     (define-key haskell-mode-map (kbd "C-c C-n c")
+       'haskell-process-cabal)))
+(eval-after-load 'haskell-cabal
+  '(progn
+     (define-key haskell-cabal-mode-map (kbd "C-c C-z")
+       'haskell-interactive-switch)
+     (define-key haskell-cabal-mode-map (kbd "C-c C-k")
+       'haskell-interactive-mode-clear)
+     (define-key haskell-cabal-mode-map (kbd "C-c C-c")
+       'haskell-process-cabal-build)
+     (define-key haskell-cabal-mode-map (kbd "C-c c")
+       'haskell-process-cabal)))
