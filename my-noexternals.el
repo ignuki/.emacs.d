@@ -28,6 +28,7 @@
 (fringe-mode '(0 . 0))
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
+(setq inhibit-compacting-font-caches 1)
 (global-auto-revert-mode 1)
 (electric-pair-mode 1)
 (show-paren-mode t)

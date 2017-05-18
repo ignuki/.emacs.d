@@ -183,4 +183,4 @@ can be used to add a number of spaces to the front and back of the string."
                            ;; (format-time-string "%H:%M ⁃ ")
                            (powerline-time)
                            (line-count-line)))
-                         0 0)))))
+0 0)))))
