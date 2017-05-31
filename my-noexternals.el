@@ -7,16 +7,6 @@
 (autoload 'ghc-debug "ghc" nil t)
 (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
 (add-to-list 'exec-path "~/.cabal/bin")
-;; (add-to-list
-;;  'default-frame-alist
-;;  '(font . "Iosevka Term 10"))
-;; (set-frame-font
-;;  "Iosevka Term 10")
-;; (add-to-list
-;;  'default-frame-alist
-;;  '(font . "envypn 15"))
-;; (set-frame-font
-;;  "envypn 15")
 (add-to-list
  'default-frame-alist
  '(font . "Iosevka Term 10"))
@@ -26,6 +16,7 @@
       '(buffer-file-name "%f"
 			 (dired-directory dired-directory "%b")))
 (fringe-mode '(0 . 0))
+(setq enable-local-variables nil)
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
 (setq inhibit-compacting-font-caches 1)
@@ -49,22 +40,52 @@
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist
 	     '("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
-;;    (setq auto-mode-alist
-;;          (append
-;;           '(("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
-;; auto-mode-alist))
 (defun my-web-mode-hook ()
   "Hooks for Web mode."
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-code-indent-offset 2)
   (setq web-mode-css-indent-offset 2))
 (add-hook 'web-mode-hook  'my-web-mode-hook)
+
 (setq-default indent-tabs-mode t)
 (setq-default tab-width 8)
-(setq-default c-default-style "linux"
-	      c-basic-offset 2)
-(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
+(defun c-lineup-arglist-tabs-only (ignored)
+  "Line up argument lists by tabs, not spaces"
+  (let* ((anchor (c-langelem-pos c-syntactic-element))
+	 (column (c-langelem-2nd-pos c-syntactic-element))
+	 (offset (- (1+ column) anchor))
+	 (steps (floor offset c-basic-offset)))
+    (* (max steps 1)
+       c-basic-offset)))
+
+(add-hook 'c-mode-common-hook
+	  (lambda ()
+	    (c-add-style
+	     "libvirt"
+	     '((indent-tabs-mode . nil)
+	       (c-basic-offset . 4)
+	       (c-indent-level . 4)
+	       (c-offsets-alist
+		(label . 1))))
+	    ;; Add kernel style
+	    (c-add-style
+	     "linux-tabs-only"
+	     '("linux"
+	       (c-offsets-alist
+		(arglist-cont-nonempty
+		 c-lineup-gcc-asm-reg
+		 c-lineup-arglist-tabs-only))))))
+
+(defun my-c-mode-hooks ()
+  (let ((bname (buffer-file-name)))
+    (cond
+     ((string-match "libvirt/" bname) (c-set-style "libvirt"))
+     ((string-match "datastructures/" bname) (c-set-style "linux"))
+     ((string-match "linux/" bname) (c-set-style "linux-tabs-only"))
+     )))
+
+(add-hook 'c-mode-hook 'my-c-mode-hooks)
+
 (setq backup-by-copying t      ; don't clobber symlinks
       backup-directory-alist
       '(("." . "~/.saves"))    ; don't litter my fs tree
@@ -84,7 +105,6 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq vc-mode 1)
 (display-time-mode 1)
-(display-battery-mode 1)
 
 (defun remove-elc-on-save ()
   "If you're saving an elisp file, likely the .elc is no longer valid."
@@ -102,11 +122,6 @@
 
 (add-hook 'term-mode-hook (lambda ()
 			    (setq-local global-hl-line-mode nil)))
-
-;;(setq auto-mode-alist
-;;      (append
-;;       '(("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
-;;       auto-mode-alist))
 
 (defadvice term-handle-exit
     (after term-kill-buffer-on-exit activate)
