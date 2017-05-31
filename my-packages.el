@@ -19,10 +19,9 @@
     t))
 
 
-(unless (prelude-packages-installed-p)
-  (message "%s" "Emacs Prelude is now refreshing its package database...")
-  (package-refresh-contents)
-  (message "%s" " done.")
-  (dolist (p prelude-packages)
-    (when (not (package-installed-p p))
-      (package-install p))))
+  ;; (message "%s" "Emacs Prelude is now refreshing its package database...")
+  ;; (package-refresh-contents)
+  ;; (message "%s" " done.")
+  ;; (dolist (p prelude-packages)
+  ;;   (when (not (package-installed-p p))
+  ;;     (package-install p)))
