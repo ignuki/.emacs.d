@@ -1,4 +1,4 @@
-(defvar my:theme 'base16-default-dark)
+(defvar my:theme 'base16-onedark)
 (defvar my:theme-window-loaded nil)
 (defvar my:theme-terminal-loaded nil)
 (if (daemonp)
