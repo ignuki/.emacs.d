@@ -5,6 +5,7 @@
   (interactive)
   (byte-recompile-directory user-emacs-directory 0))
 
+(load "~/.emacs.d/my-packages.el")
 (byte-compile-init-dir)
 (load "~/.emacs.d/my-loadpackages.elc")
 (add-hook 'after-init-hook
@@ -53,15 +54,3 @@
  '(term-color-red ((t (:foreground "#ff6633"))))
  '(term-color-white ((t (:foreground "#ede4b1"))))
  '(term-color-yellow ((t (:foreground "#803319")))))
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(term-color-black ((t (:foreground "#525252"))))
-;;  '(term-color-blue ((t (:foreground "#33ddff"))))
-;;  '(term-color-cyan ((t (:foreground "#196f80"))))
-;;  '(term-color-green ((t (:foreground "#bf4c26"))))
-;;  '(term-color-magenta ((t (:foreground "#26a6bf"))))
-;;  '(term-color-red ((t (:foreground "#ff6633"))))
-;;  '(term-color-white ((t (:foreground "#bfbfbf"))))
-;;  '(term-color-yellow ((t (:foreground "#803319")))))

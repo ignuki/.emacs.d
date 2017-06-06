@@ -1,5 +1,3 @@
-(load "~/.emacs.d/my-packages.el")
-
 (require 'use-package)
 
 (use-package ivy
