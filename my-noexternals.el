@@ -16,6 +16,7 @@
       '(buffer-file-name "%f"
 			 (dired-directory dired-directory "%b")))
 (fringe-mode '(0 . 0))
+(setq debug-on-error t)
 (setq enable-local-variables nil)
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
