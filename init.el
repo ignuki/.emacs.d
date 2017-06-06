@@ -6,13 +6,6 @@
   (byte-recompile-directory user-emacs-directory 0))
 
 (load "~/.emacs.d/my-packages.el")
-(unless (prelude-packages-installed-p)
-  (message "%s" "Emacs Prelude is now refreshing its package database...")
-  (package-refresh-contents)
-  (message "%s" " done.")
-  (dolist (p prelude-packages)
-    (when (not (package-installed-p p))
-      (package-install p))))
 (byte-compile-init-dir)
 (load "~/.emacs.d/my-loadpackages.elc")
 (add-hook 'after-init-hook
