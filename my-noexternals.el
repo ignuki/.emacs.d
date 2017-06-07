@@ -16,7 +16,13 @@
       '(buffer-file-name "%f"
 			 (dired-directory dired-directory "%b")))
 (fringe-mode '(0 . 0))
-(setq debug-on-error t)
+;; (setq debug-on-error t)
+(setq auth-source-save-behavior nil
+      haskell-process-auto-import-loaded-modules t
+      haskell-process-log t
+      haskell-process-suggest-remove-import-lines t
+      haskell-process-type (quote cabal-repl)
+      send-mail-function (quote smtpmail-send-it))
 (setq enable-local-variables nil)
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)

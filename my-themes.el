@@ -1,6 +1,25 @@
 (defvar my:theme 'base16-onedark)
 (defvar my:theme-window-loaded nil)
 (defvar my:theme-terminal-loaded nil)
+
+(defun setcolors ()
+  (load-theme my:theme t)
+  (custom-theme-set-faces
+   my:theme
+   '(linum ((t (:underline nil :background "#333842" :foreground "#a2a3b4"
+			   :weight bold))))
+   '(mode-line ((t (:background "#282c34" :foreground "#b8b8b8" :box nil
+				:family "Iosevka Term" :height 100))))
+   '(mode-line-buffer-id ((t (:foreground "#a1b56c" :family "Iosevka Term"
+					  :height 100))))
+   '(mode-line-highlight ((t (:foreground "#ba8baf" :box nil :weight bold
+					  :family "Iosevka Term"
+					  :height 100))))
+   '(mode-line-inactive ((t (:background "#282c34" :foreground "#585858"
+					 :box nil :underline nil
+					 :family "Iosevka Term" :height 100)))))
+  )
+
 (if (daemonp)
     (add-hook
      'after-make-frame-functions
@@ -12,38 +31,20 @@
          (unless my:theme-window-loaded
            (if my:theme-terminal-loaded
                (enable-theme my:theme)
-             (load-theme my:theme t))
+             (setcolors))
            (setq my:theme-window-loaded t))
          (unless my:theme-terminal-loaded
            (if my:theme-window-loaded
                (enable-theme my:theme)
-             (load-theme my:theme t))
+             (setcolors))
            (setq my:theme-terminal-loaded t)))))
   (progn
-    (load-theme my:theme t)
+    (setcolors)
     (if (display-graphic-p)
         (setq my:theme-window-loaded t)
       (setq my:theme-terminal-loaded t)))
   (set-frame-parameter (selected-frame) 'internal-border-width 0))
 
-(custom-set-faces
- ;; term
- '(term-color-black
-   ((t (:foreground "#525252"))))
- '(term-color-red
-   ((t (:foreground "#ff6633"))))
- '(term-color-green
-   ((t (:foreground "#bf4c26"))))
- '(term-color-yellow
-   ((t (:foreground "#803319"))))
- '(term-color-blue
-   ((t (:foreground "#33ddff"))))
- '(term-color-magenta
-   ((t (:foreground "#26a6bf"))))
- '(term-color-cyan
-   ((t (:foreground "#196f80"))))
- '(term-color-white
-   ((t (:foreground "#ede4b1")))))
 
 (add-hook 'before-make-frame-hook
           #'(lambda ()
