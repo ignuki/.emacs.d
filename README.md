@@ -1,5 +1,6 @@
 ## Dependencies
 - `git`
+- Emacs v. 25 or higher
 
 ## Installation
 1. Install dependencies.
