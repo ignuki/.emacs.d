@@ -1,7 +1,5 @@
 ## Dependencies
 - `git`
-- `ghc` and `cabal`
-
 
 ## Installation
 1. Install dependencies.
