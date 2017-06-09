@@ -10,4 +10,4 @@
 4. Run `fc-cache`
 5. Run `emacs`.
 6. `M-x all-the-icons-install-fonts`
-7. Restart Emacs. You can now run E in regular mode or a a daemon.
+7. Restart Emacs. You can now run Emacs in regular mode or a a daemon.
