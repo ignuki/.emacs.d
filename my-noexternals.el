@@ -4,10 +4,6 @@
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
 
-(autoload 'ghc-init "ghc" nil t)
-(autoload 'ghc-debug "ghc" nil t)
-(add-to-list 'exec-path "~/.cabal/bin")
-
 (add-to-list
  'default-frame-alist
  '(font . "Iosevka Term 10"))
