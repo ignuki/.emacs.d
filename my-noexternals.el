@@ -111,6 +111,8 @@
 (add-hook 'c-mode-hook 'my-c-mode-hooks)
 (add-hook 'web-mode-hook  'my-web-mode-hook)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
 
 (add-hook 'eshell-mode-hook (lambda ()
 			      (setq-local global-hl-line-mode nil)))
