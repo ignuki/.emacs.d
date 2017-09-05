@@ -34,7 +34,8 @@
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
       undo-tree-auto-save-history t
-      vc-mode 1)
+      vc-mode 1
+      jdee-server-dir "/Users/you/.emacs.d/jdee-server")
 
 (global-auto-revert-mode 1)
 (electric-pair-mode 1)
@@ -96,6 +97,7 @@
      ((string-match "libvirt/" bname) (c-set-style "libvirt"))
      ((string-match "datastructures/" bname) (c-set-style "linux"))
      ((string-match "linux/" bname) (c-set-style "linux-tabs-only"))
+     ((string-match ".*" bname) (c-set-style "linux"))
      )))
 
 (defun remove-elc-on-save ()

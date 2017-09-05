@@ -30,7 +30,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (web-mode use-package-chords use-package projectile pkg-info less-css-mode ghc fill-column-indicator evil-magit evil epl diminish dash counsel bind-chord base16-theme async all-the-icons))))
+    (jdee web-mode use-package-chords use-package projectile pkg-info less-css-mode ghc fill-column-indicator evil-magit evil epl diminish dash counsel bind-chord base16-theme async all-the-icons))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

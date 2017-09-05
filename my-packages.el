@@ -11,7 +11,7 @@
 (defvar prelude-packages
   '(all-the-icons async base16-theme bind-chord bind-key counsel dash diminish
 		  epl evil evil-magit fill-column-indicator ghc git-commit
-		  goto-chg haskell-mode ivy key-chord less-css-mode magit magit-popup
+		  goto-chg haskell-mode ivy jdee key-chord less-css-mode magit magit-popup
 		  pkg-info projectile swiper undo-tree use-package use-package-chords
 		  web-mode with-editor)
   "A list of packages to ensure are installed at launch.")

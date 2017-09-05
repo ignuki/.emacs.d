@@ -6,9 +6,12 @@
   (load-theme my:theme t)
   (custom-theme-set-faces
    my:theme
-   '(linum ((t (:underline nil :background "#333842" :foreground "#a2a3b4"
+   '(default ((t (:background "#161718" :foreground "#d0d0d0"))))
+   '(hl-line ((t (:background "#282A2C"))))
+   '(highlight ((t (:background "#282A2C"))))
+   '(linum ((t (:underline nil :background "#232832" :foreground "#a2a3b4"
 			   :weight bold))))
-   '(mode-line ((t (:background "#282c34" :foreground "#b8b8b8" :box nil
+   '(mode-line ((t (:background "#181819" :foreground "#b8b8b8" :box nil
 				:family "Iosevka Term" :height 100))))
    '(mode-line-buffer-id ((t (:foreground "#a1b56c" :family "Iosevka Term"
 					  :height 100))))
@@ -17,7 +20,8 @@
 					  :height 100))))
    '(mode-line-inactive ((t (:background "#282c34" :foreground "#585858"
 					 :box nil :underline nil
-					 :family "Iosevka Term" :height 100)))))
+					 :family "Iosevka Term" :height 100))))
+   )
   )
 
 (if (daemonp)
