@@ -100,6 +100,9 @@
      ((string-match ".*" bname) (c-set-style "linux"))
      )))
 
+(add-hook 'sh-mode-hook
+	  (lambda () (setq indent-tabs-mode nil)))
+
 (defun remove-elc-on-save ()
   "If you're saving an elisp file, likely the .elc is no longer valid."
   (add-hook 'after-save-hook
