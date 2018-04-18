@@ -10,7 +10,7 @@
 
 (defvar prelude-packages
   '(all-the-icons async base16-theme bind-chord bind-key counsel dash diminish
-		  epl evil evil-magit fill-column-indicator ghc git-commit
+		  epl evil evil-magit fill-column-indicator ghc git-commit go-mode
 		  goto-chg haskell-mode ivy jdee key-chord less-css-mode magit magit-popup
 		  pkg-info projectile swiper undo-tree use-package use-package-chords
 		  web-mode with-editor)

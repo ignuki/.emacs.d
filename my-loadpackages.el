@@ -29,7 +29,8 @@
   (setq fci-rule-column 80))
 (use-package all-the-icons)
 (use-package haskell-mode)
-
+(use-package go-mode)
+(use-package go-mode-load)
 (use-package web-mode)
 (use-package less-css-mode)
 
