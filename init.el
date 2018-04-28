@@ -22,6 +22,7 @@
 	     (load "~/.emacs.d/my-linum.elc")
 	     (load "~/.emacs.d/my-themes.elc")
 	     (load "~/.emacs.d/lisp/plsql.elc")
+	     (load "~/.emacs.d/lisp/dockerfile-mode.elc")
 	     (load "~/.emacs.d/my-gnus.elc")))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
