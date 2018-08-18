@@ -105,29 +105,25 @@ can be used to add a number of spaces to the front and back of the string."
        `(:background ,(evil-tag-color) :family ,(funcall (car result)))))))
 
 (defun custom-modeline-mode-icon ()
-  (let ((icon (all-the-icons-icon-for-buffer)))
+ (let ((icon (all-the-icons-icon-for-buffer)))
     (if (not (symbolp icon)) ;; This implies it's the major mode
         (format " %s"
                 (propertize
-                 icon
+                 (all-the-icons-icon-for-buffer)
                  'face
-                 `(:height 1.0 :family ,(all-the-icons-icon-family-for-buffer))
+                 `(:family ,(all-the-icons-icon-family-for-buffer))
                  'display '(raise 0.0)))
       (format " %s"
               (propertize
                ""
                'face
-               `(:height 1.0 :family ,(all-the-icons-faicon-family))
+               `(:family ,(all-the-icons-faicon-family))
                'display '(raise 0.0))))))
 
 (defun line-count-line ()
   (let* ((bg (time-tag-bg-color))
          (fg (time-tag-fg-color)))
     (concat
-     ;; (propertize
-     ;;  (all-the-icons-faicon "rebel")
-     ;;  'face
-     ;;  `(:height 0.8 :background ,bg :foreground ,fg) 'display '(raise 0.2))
      (propertize
       (format " %%l/%d "
               (count-lines (point-min) (point-max)))
@@ -135,8 +131,6 @@ can be used to add a number of spaces to the front and back of the string."
 
 (defun powerline-time ()
   (let* ((hour (string-to-number (format-time-string "%I")))
-         ;; (icon (all-the-icons-wicon
-         ;;        (format "time-%s" hour) :height 1.0 :v-adjust 0.0))
          (bg (time-tag-bg-color))
          (fg (time-tag-fg-color)))
     (concat
@@ -144,24 +138,21 @@ can be used to add a number of spaces to the front and back of the string."
       (format-time-string " %H:%M ")
       'face
       `(:height 1.0 :background ,bg :foreground ,fg))
-     ;; (propertize
-     ;;  (format "%s" icon)
-     ;;  'face
-     ;;  `(:height 1.0 :family "Weather Icons" :background ,bg :foreground ,fg)
-     ;;  'display '(raise -0.0))
      (propertize
       "·"
       'face `(:height 1.0 :background ,bg :foreground ,fg)))))
 
-(defvar separator-left
-  (propertize
-   ""
-   'face `(:height 1.1 :foreground "#86261c") 'display '(raise -0.0)))
+(defvar separator-left "")
+(defvar separator-right "")
+;; (defvar separator-left
+;;   (propertize
+;;    ""
+;;    'face `(:height 1.1 :foreground "#86261c") 'display '(raise -0.0)))
 
-(defvar separator-right
-  (propertize
-   ""
-   'face `(:height 1.1 :foreground "#86261c") 'display '(raise -0.0)))
+;; (defvar separator-right
+;;   (propertize
+;;    " "
+;;    'face `(:height 1.1 :foreground "#86261c") 'display '(raise -0.0)))
 
 (setq-default mode-line-format
               (list
@@ -175,7 +166,7 @@ can be used to add a number of spaces to the front and back of the string."
                            (custom-modeline-mode-icon) ;; %m
                            " %b "))
                          ;;center
-                         " "
+                         ""
                          ;; right
                          (format-mode-line
                           (concat
