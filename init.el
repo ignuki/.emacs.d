@@ -13,8 +13,8 @@
 (defvar prelude-packages
   '(async counsel dracula-theme evil evil-magit fill-column-indicator ghc
 	  git-commit go-mode goto-chg haskell-mode ivy less-css-mode magit
-	  magit-popup pkg-info s swiper undo-tree use-package use-package-chords
-	  web-mode with-editor)
+	  magit-popup pkg-info python s swiper undo-tree use-package
+	  use-package-chords web-mode with-editor)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (pkg prelude-packages)
@@ -54,9 +54,9 @@
       vc-mode                           1)
 
 (global-auto-revert-mode 1)
-(electric-pair-mode 1)
-(show-paren-mode t)
 (fringe-mode '(0 . 0))
+(show-paren-mode t)
+(electric-pair-mode 1)
 (global-hl-line-mode 1)
 (blink-cursor-mode 0)
 (display-time-mode 1)
@@ -143,12 +143,13 @@
 (require 'use-package)
 
 (use-package ivy
-  :init
-  (setq ivy-use-virtual-buffers t
-	ivy-count-format ""
-	ivy-display-style nil)
-  :config
-  (ivy-mode 1))
+  :init (setq ivy-use-virtual-buffers t
+	      ivy-count-format ""
+	      ivy-display-style nil)
+  :config (ivy-mode 1))
+
+(use-package dracula-theme
+  :config (load-theme 'dracula t))
 
 (use-package swiper
   :bind (("C-s" . swiper)))
@@ -157,21 +158,12 @@
   :bind (("M-x" . counsel-M-x)
 	 ("C-x C-f" . counsel-find-file)))
 
-;;(use-package projectile)
-
-;;(use-package cl)
-
 (use-package evil
-  :init
-  (setq evil-want-fine-undo t)
-  ;;  (add-to-list 'evil-insert-state-modes 'lisp-interaction-mode)
-  :config
-  (evil-mode 1))
+  :init (setq evil-want-fine-undo t)
+  :config (evil-mode 1))
 
-;;(use-package magit)
 (use-package evil-magit
-  :init
-  (setq evil-magit-state 'normal))
+  :init (setq evil-magit-state 'normal))
 
 (use-package fill-column-indicator
   :init
@@ -194,10 +186,9 @@
   :mode ("\\.mustache\\'" . web-mode)
   :mode ("\\.djhtml\\'" . web-mode)
   :mode ("\\.html?\\'" . web-mode)
-  :init
-  (setq web-mode-markup-indent-offset 2
-	web-mode-code-indent-offset 2
-	web-mode-css-indent-offset 2))
+  :init (setq web-mode-markup-indent-offset 2
+	      web-mode-code-indent-offset 2
+	      web-mode-css-indent-offset 2))
 
 (use-package less-css-mode
   :mode ("\\.less\\'" . less-css-mode))
@@ -209,8 +200,6 @@
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode))
-
-;;(use-package sql)
 
 (defvar linum-current-line 1 "Current line number.")
 (defvar linum-format-fmt   "" " ")
@@ -228,15 +217,14 @@
   "Set the current line."
   (setq linum-current-line (line-number-at-pos)))
 
-(unless window-system
-  (add-hook 'linum-before-numbering-hook
-	    (lambda ()
-	      (setq-local linum-format-fmt
-			  (let ((w (length (number-to-string
-					    (count-lines
-					     (point-min)
-					     (point-max))))))
-			    (concat " %" (number-to-string w) "d "))))))
+(add-hook 'linum-before-numbering-hook
+	  (lambda ()
+	    (setq-local linum-format-fmt
+			(let ((w (length (number-to-string
+					  (count-lines
+					   (point-min)
+					   (point-max))))))
+			  (concat " %" (number-to-string w) "d ")))))
 
 
 (defun linum-format-func (line)
@@ -246,10 +234,11 @@
 	   'linum)))
     (propertize (format linum-format-fmt line) 'face face)))
 
-(unless window-system
-  (setq linum-format 'linum-format-func))
+(setq linum-format 'linum-format-func)
 
 (add-hook 'find-file-hook (lambda ()
 			    (linum-mode 1)))
 (add-hook 'eshell-mode-hook (lambda ()
 			      (linum-mode -1)))
+
+(linum-mode t)
