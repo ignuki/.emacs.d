@@ -25,8 +25,8 @@
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
-(add-to-list 'default-frame-alist '(font . "Iosevka Term 10"))
-(set-frame-font "Iosevka Term 10")
+(add-to-list 'default-frame-alist '(font . "Iosevka Term 11"))
+(set-frame-font "Iosevka Term 11")
 
 (setq frame-title-format
       '(buffer-file-name "%f" (dired-directory dired-directory "%b"))
@@ -39,8 +39,11 @@
       mouse-wheel-scroll-amount         '(1 ((shift) . 1))
       mouse-wheel-progressive-speed     nil
       mouse-wheel-follow-mouse          't
+      scroll-margin                     1
+      scroll-conservatively             0
+      scroll-up-aggressively            0.01
+      scroll-down-aggressively          0.01     
       scroll-step                       1
-      scroll-conservatively             10000
       backup-by-copying                 t
       backup-directory-alist            '(("." . "~/.saves"))
       undo-tree-history-directory-alist '(("." . "~/.undo-tree"))
@@ -52,6 +55,11 @@
       auto-save-file-name-transforms    `((".*" ,temporary-file-directory t))
       undo-tree-auto-save-history       t
       vc-mode                           1)
+
+(setq-default scroll-up-aggressively    0.01
+	      scroll-down-aggressively   0.01
+	      indent-tabs-mode           t
+	      tab-width                  8)
 
 (global-auto-revert-mode 1)
 (fringe-mode '(0 . 0))
@@ -65,10 +73,7 @@
 (load "~/.emacs.d/lisp/dockerfile-mode.el")
 (add-to-list 'auto-mode-alist
 	     '("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
-;;(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
-
-(setq-default indent-tabs-mode t)
-(setq-default tab-width 8)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 
 (defun c-lineup-arglist-tabs-only (ignored)
   "Line up argument lists by tabs, not spaces"
@@ -208,7 +213,7 @@
 (defface linum-current-line
   `((t :inherit linum
        :foreground "chocolate"
-       ;; :weight bold
+       :weight bold
        ))
   "Face for displaying the current line number."
   :group 'linum)
@@ -226,7 +231,6 @@
 					   (point-max))))))
 			  (concat " %" (number-to-string w) "d ")))))
 
-
 (defun linum-format-func (line)
   (let ((face
 	 (if (= line linum-current-line)
@@ -240,5 +244,4 @@
 			    (linum-mode 1)))
 (add-hook 'eshell-mode-hook (lambda ()
 			      (linum-mode -1)))
-
 (linum-mode t)
