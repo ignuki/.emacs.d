@@ -39,11 +39,13 @@
       mouse-wheel-scroll-amount         '(1 ((shift) . 1))
       mouse-wheel-progressive-speed     nil
       mouse-wheel-follow-mouse          't
-      scroll-margin                     1
-      scroll-conservatively             0
-      scroll-up-aggressively            0.01
-      scroll-down-aggressively          0.01     
+;;      scroll-margin                     1
+      scroll-conservatively             10000
+;;      scroll-up-aggressively            0.01
+;;      scroll-down-aggressively          0.01
       scroll-step                       1
+      auto-save-interval                1000
+      auto-window-vscroll               nil
       backup-by-copying                 t
       backup-directory-alist            '(("." . "~/.saves"))
       undo-tree-history-directory-alist '(("." . "~/.undo-tree"))
@@ -230,6 +232,7 @@
 					   (point-min)
 					   (point-max))))))
 			  (concat " %" (number-to-string w) "d ")))))
+
 
 (defun linum-format-func (line)
   (let ((face
