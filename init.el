@@ -11,10 +11,10 @@
 (unless package-archive-contents (package-refresh-contents))
 
 (defvar prelude-packages
-  '(async counsel dracula-theme evil evil-magit fill-column-indicator ghc
+  '(async cargo counsel dracula-theme evil evil-magit fill-column-indicator ghc
 	  git-commit go-mode goto-chg haskell-mode ivy less-css-mode magit
-	  magit-popup pkg-info python s swiper undo-tree use-package
-	  use-package-chords web-mode with-editor)
+	  magit-popup pkg-info python rust-mode s swiper toml-mode undo-tree
+	  use-package use-package-chords web-mode with-editor)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (pkg prelude-packages)
@@ -26,6 +26,9 @@
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
 (add-to-list 'default-frame-alist '(font . "Iosevka Term 11"))
+(set-face-font 'bold "Iosevka Term Bold 11")
+(set-face-font 'italic "Iosevka Term Italic 11")
+(set-face-font 'bold-italic "Iosevka Term Bold Italic 11")
 (set-frame-font "Iosevka Term 11")
 
 (setq frame-title-format
@@ -36,7 +39,7 @@
       inhibit-startup-screen            t
       vc-follow-symlinks                t
       inhibit-compacting-font-caches    1
-      mouse-wheel-scroll-amount         '(1 ((shift) . 1))
+      mouse-wheel-scroll-amount         '(3 ((shift) . 3))
       mouse-wheel-progressive-speed     nil
       mouse-wheel-follow-mouse          't
 ;;      scroll-margin                     1
@@ -73,6 +76,7 @@
 
 (load "~/.emacs.d/lisp/plsql.el")
 (load "~/.emacs.d/lisp/dockerfile-mode.el")
+(load "~/.emacs.d/lisp/nasm-mode.el")
 (add-to-list 'auto-mode-alist
 	     '("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
@@ -149,24 +153,20 @@
 
 (require 'use-package)
 
-(use-package ivy
-  :init (setq ivy-use-virtual-buffers t
-	      ivy-count-format ""
-	      ivy-display-style nil)
-  :config (ivy-mode 1))
-
-(use-package dracula-theme
-  :config (load-theme 'dracula t))
-
-(use-package swiper
-  :bind (("C-s" . swiper)))
+(use-package cargo
+  :init
+  (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
 	 ("C-x C-f" . counsel-find-file)))
 
+(use-package dracula-theme
+  :config (load-theme 'dracula t))
+
 (use-package evil
-  :init (setq evil-want-fine-undo t)
+  :init
+  (setq evil-want-fine-undo t)
   :config (evil-mode 1))
 
 (use-package evil-magit
@@ -176,12 +176,41 @@
   :init
   (setq fci-rule-column 80))
 
+(use-package go-mode
+  :mode ("\\.go\\'" . go-mode))
+
 (use-package haskell-mode
   :mode ("\\.hs\\'" . haskell-mode)
   :interpreter ("haskell" . haskell-mode))
 
-(use-package go-mode
-  :mode ("\\.go\\'" . go-mode))
+(use-package ivy
+  :init (setq ivy-use-virtual-buffers t
+	      ivy-count-format ""
+	      ivy-display-style nil)
+  :config (ivy-mode 1))
+
+(use-package less-css-mode
+  :mode ("\\.less\\'" . less-css-mode))
+
+(use-package nasm-mode
+  :mode ("\\.s\\'" . nasm-mode)
+  :mode ("\\.asm\\'" . nasm-mode)
+  :mode ("\\.nasm\\'" . nasm-mode))
+
+(use-package python
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode))
+
+(use-package rust-mode
+  :mode ("\\.rs\\'" . rust-mode)
+  :init
+  (setq rust-format-on-save t))
+
+(use-package swiper
+  :bind (("C-s" . swiper)))
+
+(use-package toml-mode
+  :mode ("\\.toml\\'" . toml-mode))
 
 (use-package web-mode
   :mode ("\\.html\\'" . web-mode)
@@ -193,20 +222,14 @@
   :mode ("\\.mustache\\'" . web-mode)
   :mode ("\\.djhtml\\'" . web-mode)
   :mode ("\\.html?\\'" . web-mode)
-  :init (setq web-mode-markup-indent-offset 2
-	      web-mode-code-indent-offset 2
-	      web-mode-css-indent-offset 2))
-
-(use-package less-css-mode
-  :mode ("\\.less\\'" . less-css-mode))
+  :init
+  (setq web-mode-markup-indent-offset 2
+	web-mode-code-indent-offset 2
+	web-mode-css-indent-offset 2))
 
 (use-package yaml-mode
   :mode ("\\.yml\\'" . yaml-mode)
   :mode ("\\.yaml\\'" . yaml-mode))
-
-(use-package python
-  :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python" . python-mode))
 
 (defvar linum-current-line 1 "Current line number.")
 (defvar linum-format-fmt   "" " ")
