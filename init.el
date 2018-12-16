@@ -206,6 +206,10 @@
   :init
   (setq rust-format-on-save t))
 
+(use-package tramp-mode
+  :init
+  (setq tramp-default-method "ssh"))
+
 (use-package swiper
   :bind (("C-s" . swiper)))
 
