@@ -25,11 +25,11 @@
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
-(add-to-list 'default-frame-alist '(font . "Iosevka Term 11"))
-(set-face-font 'bold "Iosevka Term Bold 11")
-(set-face-font 'italic "Iosevka Term Italic 11")
-(set-face-font 'bold-italic "Iosevka Term Bold Italic 11")
-(set-frame-font "Iosevka Term 11")
+(add-to-list 'default-frame-alist '(font . "Iosevka Term 10"))
+(set-face-font 'bold "Iosevka Term Bold 10")
+(set-face-font 'italic "Iosevka Term Italic 10")
+(set-face-font 'bold-italic "Iosevka Term Bold Italic 10")
+(set-frame-font "Iosevka Term 10")
 
 (setq frame-title-format
       '(buffer-file-name "%f" (dired-directory dired-directory "%b"))
@@ -214,6 +214,7 @@
 
 (use-package web-mode
   :mode ("\\.html\\'" . web-mode)
+  :mode ("\\.js\\'" . web-mode)
   :mode ("\\.css\\'" . web-mode)
   :mode ("\\.tpl\\.php\\'" . web-mode)
   :mode ("\\.[agj]sp\\'" . web-mode)
