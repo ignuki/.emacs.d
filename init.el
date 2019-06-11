@@ -42,10 +42,10 @@
       mouse-wheel-scroll-amount         '(3 ((shift) . 3))
       mouse-wheel-progressive-speed     nil
       mouse-wheel-follow-mouse          't
-;;      scroll-margin                     1
+      ;;      scroll-margin                     1
       scroll-conservatively             10000
-;;      scroll-up-aggressively            0.01
-;;      scroll-down-aggressively          0.01
+      ;;      scroll-up-aggressively            0.01
+      ;;      scroll-down-aggressively          0.01
       scroll-step                       1
       auto-save-interval                1000
       auto-window-vscroll               nil
@@ -59,7 +59,8 @@
       backup-directory-alist            `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms    `((".*" ,temporary-file-directory t))
       undo-tree-auto-save-history       t
-      vc-mode                           1)
+      vc-mode                           1
+      column-number-mode                1)
 
 (setq-default scroll-up-aggressively    0.01
 	      scroll-down-aggressively   0.01
