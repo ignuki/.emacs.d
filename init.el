@@ -1,35 +1,140 @@
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
 (package-initialize)
 
 (require 'package)
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives
-	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+	     '("melpa" . "https://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
 	     '("marmalade" . "https://marmalade-repo.org/packages/") t)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/") t
 (add-to-list 'load-path "~/.emacs.d/lisp/" t)
 
-(unless package-archive-contents (package-refresh-contents))
+(setq use-package-always-ensure t)
 
-(defvar prelude-packages
-  '(async cargo counsel dracula-theme evil evil-magit fill-column-indicator ghc
-	  git-commit go-mode goto-chg haskell-mode ivy less-css-mode magit
-	  magit-popup pkg-info python rust-mode s swiper toml-mode undo-tree
-	  use-package use-package-chords web-mode with-editor)
-  "A list of packages to ensure are installed at launch.")
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package)
+  (package-install 'use-package-chords))
 
-(dolist (pkg prelude-packages)
-  (unless (package-installed-p pkg) (package-install pkg)))
+(require 'use-package)
+
+(use-package async)
+
+(use-package cargo
+  :init
+  (add-hook 'rust-mode-hook 'cargo-minor-mode))
+
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x C-f" . counsel-find-file)))
+
+(use-package dracula-theme
+  :config (load-theme 'dracula t))
+
+(use-package evil
+  :init
+  (setq evil-want-fine-undo t)
+  :config (evil-mode 1))
+
+(use-package evil-magit
+  :init (setq evil-magit-state 'normal))
+
+(use-package fill-column-indicator
+  :init
+  (setq fci-rule-column 80))
+
+(use-package ghc)
+
+(use-package git-commit)
+
+(use-package go-mode
+  :mode ("\\.go\\'" . go-mode))
+
+(use-package goto-chg)
+
+(use-package haskell-mode
+  :mode ("\\.hs\\'" . haskell-mode)
+  :interpreter ("haskell" . haskell-mode))
+
+(use-package ivy
+  :init (setq ivy-use-virtual-buffers t
+	      ivy-count-format ""
+	      ivy-display-style nil)
+  :config (ivy-mode 1))
+
+(use-package less-css-mode
+  :mode ("\\.less\\'" . less-css-mode))
+
+(use-package magit)
+
+(use-package magit-popup)
+
+(use-package nasm-mode
+  :mode ("\\.s\\'" . nasm-mode)
+  :mode ("\\.asm\\'" . nasm-mode)
+  :mode ("\\.nasm\\'" . nasm-mode))
+
+(use-package pkg-info)
+
+(use-package python
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode))
+
+(use-package rust-mode
+  :mode ("\\.rs\\'" . rust-mode)
+  :init
+  (setq rust-format-on-save t))
+
+(use-package s)
+
+(use-package swiper
+  :bind (("C-s" . swiper)))
+
+(use-package terraform-mode)
+
+(use-package toml-mode
+  :mode ("\\.toml\\'" . toml-mode))
+
+(use-package tramp
+  :init
+  (setq tramp-default-method "ssh"))
+
+(use-package undo-tree)
+
+(use-package web-mode
+  :mode ("\\.html\\'" . web-mode)
+  :mode ("\\.js\\'" . web-mode)
+  :mode ("\\.css\\'" . web-mode)
+  :mode ("\\.tpl\\.php\\'" . web-mode)
+  :mode ("\\.[agj]sp\\'" . web-mode)
+  :mode ("\\.as[cp]x\\'" . web-mode)
+  :mode ("\\.erb\\'" . web-mode)
+  :mode ("\\.mustache\\'" . web-mode)
+  :mode ("\\.djhtml\\'" . web-mode)
+  :mode ("\\.html?\\'" . web-mode)
+  :init
+  (setq web-mode-markup-indent-offset 2
+	web-mode-code-indent-offset 2
+	web-mode-css-indent-offset 2))
+
+(use-package with-editor)
+
+(use-package yaml-mode
+  :mode ("\\.yml\\'" . yaml-mode)
+  :mode ("\\.yaml\\'" . yaml-mode))
 
 (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
-(add-to-list 'default-frame-alist '(font . "Iosevka Term 10"))
-(set-face-font 'bold "Iosevka Term Bold 10")
-(set-face-font 'italic "Iosevka Term Italic 10")
-(set-face-font 'bold-italic "Iosevka Term Bold Italic 10")
-(set-frame-font "Iosevka Term 10")
+(add-to-list 'default-frame-alist '(font . "Iosevka Term 12"))
+(set-face-font 'bold "Iosevka Term Bold 12")
+(set-face-font 'italic "Iosevka Term Italic 12")
+(set-face-font 'bold-italic "Iosevka Term Bold Italic 12")
+(set-frame-font "Iosevka Term 12")
 
 (setq frame-title-format
       '(buffer-file-name "%f" (dired-directory dired-directory "%b"))
@@ -151,91 +256,6 @@
 
 (global-set-key [(control next)] 'gcm-scroll-down)
 (global-set-key [(control prior)]   'gcm-scroll-up)
-
-(require 'use-package)
-
-(use-package cargo
-  :init
-  (add-hook 'rust-mode-hook 'cargo-minor-mode))
-
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-	 ("C-x C-f" . counsel-find-file)))
-
-(use-package dracula-theme
-  :config (load-theme 'dracula t))
-
-(use-package evil
-  :init
-  (setq evil-want-fine-undo t)
-  :config (evil-mode 1))
-
-(use-package evil-magit
-  :init (setq evil-magit-state 'normal))
-
-(use-package fill-column-indicator
-  :init
-  (setq fci-rule-column 80))
-
-(use-package go-mode
-  :mode ("\\.go\\'" . go-mode))
-
-(use-package haskell-mode
-  :mode ("\\.hs\\'" . haskell-mode)
-  :interpreter ("haskell" . haskell-mode))
-
-(use-package ivy
-  :init (setq ivy-use-virtual-buffers t
-	      ivy-count-format ""
-	      ivy-display-style nil)
-  :config (ivy-mode 1))
-
-(use-package less-css-mode
-  :mode ("\\.less\\'" . less-css-mode))
-
-(use-package nasm-mode
-  :mode ("\\.s\\'" . nasm-mode)
-  :mode ("\\.asm\\'" . nasm-mode)
-  :mode ("\\.nasm\\'" . nasm-mode))
-
-(use-package python
-  :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python" . python-mode))
-
-(use-package rust-mode
-  :mode ("\\.rs\\'" . rust-mode)
-  :init
-  (setq rust-format-on-save t))
-
-(use-package tramp-mode
-  :init
-  (setq tramp-default-method "ssh"))
-
-(use-package swiper
-  :bind (("C-s" . swiper)))
-
-(use-package toml-mode
-  :mode ("\\.toml\\'" . toml-mode))
-
-(use-package web-mode
-  :mode ("\\.html\\'" . web-mode)
-  :mode ("\\.js\\'" . web-mode)
-  :mode ("\\.css\\'" . web-mode)
-  :mode ("\\.tpl\\.php\\'" . web-mode)
-  :mode ("\\.[agj]sp\\'" . web-mode)
-  :mode ("\\.as[cp]x\\'" . web-mode)
-  :mode ("\\.erb\\'" . web-mode)
-  :mode ("\\.mustache\\'" . web-mode)
-  :mode ("\\.djhtml\\'" . web-mode)
-  :mode ("\\.html?\\'" . web-mode)
-  :init
-  (setq web-mode-markup-indent-offset 2
-	web-mode-code-indent-offset 2
-	web-mode-css-indent-offset 2))
-
-(use-package yaml-mode
-  :mode ("\\.yml\\'" . yaml-mode)
-  :mode ("\\.yaml\\'" . yaml-mode))
 
 (defvar linum-current-line 1 "Current line number.")
 (defvar linum-format-fmt   "" " ")
