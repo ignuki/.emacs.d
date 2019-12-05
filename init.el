@@ -165,6 +165,7 @@
       auto-save-file-name-transforms    `((".*" ,temporary-file-directory t))
       undo-tree-auto-save-history       t
       vc-mode                           1
+      ring-bell-function                'ignore
       column-number-mode                1)
 
 (setq-default scroll-up-aggressively    0.01
