@@ -165,6 +165,7 @@
       auto-save-file-name-transforms    `((".*" ,temporary-file-directory t))
       undo-tree-auto-save-history       t
       vc-mode                           1
+      ring-bell-function                'ignore
       column-number-mode                1)
 
 (setq-default scroll-up-aggressively    0.01
@@ -243,13 +244,9 @@
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
-(defun gcm-scroll-down ()
-  (interactive)
-  (scroll-up 1))
+(defun gcm-scroll-down () (interactive) (scroll-up 1))
 
-(defun gcm-scroll-up ()
-  (interactive)
-  (scroll-down 1))
+(defun gcm-scroll-up () (interactive) (scroll-down 1))
 
 (global-set-key [(control down)] 'gcm-scroll-down)
 (global-set-key [(control up)]   'gcm-scroll-up)
@@ -276,24 +273,19 @@
 (add-hook 'linum-before-numbering-hook
 	  (lambda ()
 	    (setq-local linum-format-fmt
-			(let ((w (length (number-to-string
-					  (count-lines
-					   (point-min)
-					   (point-max))))))
+			(let ((w (length (number-to-string (count-lines
+							    (point-min)
+							    (point-max))))))
 			  (concat " %" (number-to-string w) "d ")))))
-
 
 (defun linum-format-func (line)
   (let ((face
 	 (if (= line linum-current-line)
-	     'linum-current-line
-	   'linum)))
+	     'linum-current-line 'linum)))
     (propertize (format linum-format-fmt line) 'face face)))
 
 (setq linum-format 'linum-format-func)
 
-(add-hook 'find-file-hook (lambda ()
-			    (linum-mode 1)))
-(add-hook 'eshell-mode-hook (lambda ()
-			      (linum-mode -1)))
+(add-hook 'find-file-hook (lambda () (linum-mode 1)))
+(add-hook 'eshell-mode-hook (lambda () (linum-mode -1)))
 (linum-mode t)
