@@ -1,18 +1,27 @@
-;(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq package-check-signature nil)
 
-(package-initialize)
-
 (require 'package)
-(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
-(add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/") t)
-;(add-to-list 'package-archives
-;	     '("marmalade" . "https://marmalade-repo.org/packages/") t)
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/") t
-(add-to-list 'load-path "~/.emacs.d/lisp/" t)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/"))))
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/" t)
+  (add-to-list 'load-path "~/.emacs.d/lisp/" t))
 
-(setq use-package-always-ensure t)
+(package-initialize)
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -20,6 +29,15 @@
   (package-install 'use-package-chords))
 
 (require 'use-package)
+
+(setq use-package-always-ensure t)
+
+(use-package asm-mode
+  :config
+  (setq asm-comment-char ?\#)
+  :mode ("\\.s\\'" . asm-mode)
+  :mode ("\\.S\\'" . asm-mode)
+  :mode ("\\.asm\\'" . asm-mode))
 
 (use-package async)
 
@@ -38,6 +56,8 @@
   :ensure t
   :config
   (editorconfig-mode 1))
+
+(setq evil-want-keybinding nil)
 
 (use-package evil
   :init
@@ -76,8 +96,6 @@
 (use-package magit-popup)
 
 (use-package nasm-mode
-  :mode ("\\.s\\'" . nasm-mode)
-  :mode ("\\.asm\\'" . nasm-mode)
   :mode ("\\.nasm\\'" . nasm-mode))
 
 (use-package pkg-info)
@@ -105,7 +123,12 @@
   :init
   (setq tramp-default-method "ssh"))
 
-(use-package undo-tree)
+(use-package undo-tree
+  :config
+  (setq undo-limit 40000
+	undo-strong-limit 60000)
+      undo-tree-auto-save-history       t
+	undo-tree-history-directory-alist '(("." . "~/.undo-tree")))
 
 (use-package web-mode
   :mode ("\\.html\\'" . web-mode)
@@ -160,17 +183,16 @@
       auto-window-vscroll               nil
       backup-by-copying                 t
       backup-directory-alist            '(("." . "~/.saves"))
-      undo-tree-history-directory-alist '(("." . "~/.undo-tree"))
       delete-old-versions               t
       kept-new-versions                 6
       kept-old-versions                 2
       version-control                   t
       backup-directory-alist            `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms    `((".*" ,temporary-file-directory t))
-      undo-tree-auto-save-history       t
       vc-mode                           1
       ring-bell-function                'ignore
-      column-number-mode                1)
+      column-number-mode                1
+      savehist-mode                     1)
 
 (setq-default scroll-up-aggressively    0.01
 	      scroll-down-aggressively   0.01
@@ -187,7 +209,6 @@
 
 (load "~/.emacs.d/lisp/plsql.el")
 (load "~/.emacs.d/lisp/dockerfile-mode.el")
-(load "~/.emacs.d/lisp/nasm-mode.el")
 (add-to-list 'auto-mode-alist
 	     '("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
@@ -203,12 +224,6 @@
 
 (add-hook 'c-mode-common-hook
 	  (lambda ()
-	    (c-add-style "libvirt"
-			 '((indent-tabs-mode . nil)
-			   (c-basic-offset . 4)
-			   (c-indent-level . 4)
-			   (c-offsets-alist
-			    (label . 1))))
 	    ;; Add kernel style
 	    (c-add-style "linux-tabs-only"
 			 '("linux"
@@ -220,7 +235,6 @@
 (defun my-c-mode-hooks ()
   (let ((bname (buffer-file-name)))
     (cond
-     ((string-match "libvirt/" bname) (c-set-style "libvirt"))
      ((string-match "datastructures/" bname) (c-set-style "linux"))
      ((string-match "linux/" bname) (c-set-style "linux-tabs-only"))
      ((string-match ".*" bname) (c-set-style "linux"))
