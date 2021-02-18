@@ -7,8 +7,8 @@
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives
-	     '("marmalade" . "https://marmalade-repo.org/packages/") t)
+;(add-to-list 'package-archives
+;	     '("marmalade" . "https://marmalade-repo.org/packages/") t)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/") t
 (add-to-list 'load-path "~/.emacs.d/lisp/" t)
 
@@ -44,14 +44,12 @@
   (setq evil-want-fine-undo t)
   :config (evil-mode 1))
 
-(use-package evil-magit
+(use-package evil-collection
   :init (setq evil-magit-state 'normal))
 
 (use-package fill-column-indicator
   :init
   (setq fci-rule-column 80))
-
-(use-package ghc)
 
 (use-package git-commit)
 
@@ -136,11 +134,11 @@
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
-(add-to-list 'default-frame-alist '(font . "Iosevka Term 10"))
-(set-face-font 'bold "Iosevka Term Bold 10")
-(set-face-font 'italic "Iosevka Term Italic 10")
-(set-face-font 'bold-italic "Iosevka Term Bold Italic 10")
-(set-frame-font "Iosevka Term 10")
+(add-to-list 'default-frame-alist '(font . "Menlo 8"))
+(set-face-font 'bold "Menlo Bold 8")
+(set-face-font 'italic "Menlo Italic 8")
+(set-face-font 'bold-italic "Menlo Bold Italic 8")
+(set-frame-font "Menlo 8")
 
 (setq frame-title-format
       '(buffer-file-name "%f" (dired-directory dired-directory "%b"))
