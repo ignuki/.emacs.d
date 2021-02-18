@@ -1,11 +1,12 @@
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+;(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(setq package-check-signature nil)
 
 (package-initialize)
 
 (require 'package)
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives
-	     '("melpa" . "https://melpa.milkbox.net/packages/") t)
+	     '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives
 	     '("marmalade" . "https://marmalade-repo.org/packages/") t)
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/") t
@@ -32,6 +33,11 @@
 
 (use-package dracula-theme
   :config (load-theme 'dracula t))
+
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 
 (use-package evil
   :init
@@ -130,11 +136,11 @@
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
-(add-to-list 'default-frame-alist '(font . "Iosevka Term 12"))
-(set-face-font 'bold "Iosevka Term Bold 12")
-(set-face-font 'italic "Iosevka Term Italic 12")
-(set-face-font 'bold-italic "Iosevka Term Bold Italic 12")
-(set-frame-font "Iosevka Term 12")
+(add-to-list 'default-frame-alist '(font . "Iosevka Term 10"))
+(set-face-font 'bold "Iosevka Term Bold 10")
+(set-face-font 'italic "Iosevka Term Italic 10")
+(set-face-font 'bold-italic "Iosevka Term Bold Italic 10")
+(set-frame-font "Iosevka Term 10")
 
 (setq frame-title-format
       '(buffer-file-name "%f" (dired-directory dired-directory "%b"))
