@@ -3,7 +3,7 @@
 
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
+		    (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
   (when no-ssl
     (warn "\
@@ -29,7 +29,6 @@ There are two things you can do about this warning:
   (package-install 'use-package-chords))
 
 (require 'use-package)
-
 (setq use-package-always-ensure t)
 
 (use-package asm-mode
@@ -57,19 +56,20 @@ There are two things you can do about this warning:
   :config
   (editorconfig-mode 1))
 
-(setq evil-want-keybinding nil)
 
 (use-package evil
   :init
-  (setq evil-want-fine-undo t)
+  (setq evil-want-fine-undo t
+	evil-want-keybinding nil)
   :config (evil-mode 1))
 
 (use-package evil-collection
-  :init (setq evil-magit-state 'normal))
+  :init
+  (setq evil-magit-state 'normal))
 
 (use-package fill-column-indicator
   :init
-  (setq fci-rule-column 80))
+  (setq fci-rule-column 90))
 
 (use-package git-commit)
 
@@ -83,10 +83,12 @@ There are two things you can do about this warning:
   :interpreter ("haskell" . haskell-mode))
 
 (use-package ivy
-  :init (setq ivy-use-virtual-buffers t
-	      ivy-count-format ""
-	      ivy-display-style nil)
-  :config (ivy-mode 1))
+  :init
+  (setq ivy-use-virtual-buffers t
+	ivy-count-format ""
+	ivy-display-style nil)
+  :config
+  (ivy-mode 1))
 
 (use-package less-css-mode
   :mode ("\\.less\\'" . less-css-mode))
@@ -94,6 +96,14 @@ There are two things you can do about this warning:
 (use-package magit)
 
 (use-package magit-popup)
+
+(use-package multi-term
+  :bind (([f5] . multi-term)
+	 ("C-<next>" . multi-term-next)
+	 ("C-<prior>" . multi-term-prev))
+  :config
+  (setq multi-term-buffer-name "term"
+	multi-term-program "/bin/bash"))
 
 (use-package nasm-mode
   :mode ("\\.nasm\\'" . nasm-mode))
@@ -105,14 +115,69 @@ There are two things you can do about this warning:
   :interpreter ("python" . python-mode))
 
 (use-package rust-mode
-  :mode ("\\.rs\\'" . rust-mode)
   :init
-  (setq rust-format-on-save t))
+  (setq rust-format-on-save t)
+  :mode ("\\.rs\\'" . rust-mode))
 
 (use-package s)
 
 (use-package swiper
   :bind (("C-s" . swiper)))
+
+(use-package term
+  :config
+  (setq term-bind-key-alist
+	(list (cons "C-c C-c" 'term-interrupt-subjob)
+	      (cons "C-p" 'previous-line)
+	      (cons "C-n" 'next-line)
+	      (cons "M-f" 'term-send-forward-word)
+	      (cons "M-b" 'term-send-backward-word)
+	      (cons "C-c C-j" 'term-line-mode)
+	      (cons "C-c C-k" 'term-char-mode)
+	      (cons "M-DEL" 'term-send-backward-kill-word)
+	      (cons "M-d" 'term-send-forward-kill-word)
+	      (cons "<C-left>" 'term-send-backward-word)
+	      (cons "<C-right>" 'term-send-forward-word)
+	      (cons "C-r" 'term-send-reverse-search-history)
+	      (cons "M-p" 'term-send-raw-meta)
+	      (cons "M-y" 'term-send-raw-meta)
+	      (cons "C-y" 'term-send-raw)))
+					; https://web.archive.org/web/20181111010613/http://paralambda.org/2012/07/02/using-gnu-emacs-as-a-terminal-emulator/
+  (defun term-handle-ansi-terminal-messages (message)
+    (while (string-match "\eAnSiT.+\n" message)
+      ;; Extract the command code and the argument.
+      (let* ((start (match-beginning 0))
+	     (command-code (aref message (+ start 6)))
+	     (argument
+	      (save-match-data
+		(substring message
+			   (+ start 8)
+			   (string-match "\r?\n" message
+					 (+ start 8))))))
+	;; Delete this command from MESSAGE.
+	(setq message (replace-match "" t t message))
+
+	(cond ((= command-code ?c)
+	       (setq term-ansi-at-dir argument))
+	      ((= command-code ?h)
+	       (setq term-ansi-at-host argument))
+	      ((= command-code ?u)
+	       (setq term-ansi-at-user argument))
+	      ((= command-code ?e)
+	       (save-excursion
+		 (find-file-other-window argument)))
+	      ((= command-code ?x)
+	       (save-excursion
+		 (find-file argument))))))
+
+    (when (and term-ansi-at-host term-ansi-at-dir term-ansi-at-user)
+      (setq buffer-file-name
+	    (format "%s@%s:%s" term-ansi-at-user term-ansi-at-host term-ansi-at-dir))
+      (set-buffer-modified-p nil)
+      (setq default-directory (if (string= term-ansi-at-host (system-name))
+				  (concatenate 'string term-ansi-at-dir "/")
+				(format "/%s@%s:%s/" term-ansi-at-user term-ansi-at-host term-ansi-at-dir))))
+    message))
 
 (use-package terraform-mode)
 
@@ -127,8 +192,8 @@ There are two things you can do about this warning:
   :config
   (setq undo-limit 40000
 	undo-strong-limit 60000)
-      undo-tree-auto-save-history       t
-	undo-tree-history-directory-alist '(("." . "~/.undo-tree")))
+  undo-tree-auto-save-history       t
+  undo-tree-history-directory-alist '(("." . "~/.undo-tree")))
 
 (use-package web-mode
   :mode ("\\.html\\'" . web-mode)
@@ -157,12 +222,6 @@ There are two things you can do about this warning:
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
-(add-to-list 'default-frame-alist '(font . "Menlo 8"))
-(set-face-font 'bold "Menlo Bold 8")
-(set-face-font 'italic "Menlo Italic 8")
-(set-face-font 'bold-italic "Menlo Bold Italic 8")
-(set-frame-font "Menlo 8")
-
 (setq frame-title-format
       '(buffer-file-name "%f" (dired-directory dired-directory "%b"))
       custom-file                       "~/.emacs.d/custom.el"
@@ -174,10 +233,7 @@ There are two things you can do about this warning:
       mouse-wheel-scroll-amount         '(3 ((shift) . 3))
       mouse-wheel-progressive-speed     nil
       mouse-wheel-follow-mouse          't
-      ;;      scroll-margin                     1
       scroll-conservatively             10000
-      ;;      scroll-up-aggressively            0.01
-      ;;      scroll-down-aggressively          0.01
       scroll-step                       1
       auto-save-interval                1000
       auto-window-vscroll               nil
@@ -235,7 +291,6 @@ There are two things you can do about this warning:
 (defun my-c-mode-hooks ()
   (let ((bname (buffer-file-name)))
     (cond
-     ((string-match "datastructures/" bname) (c-set-style "linux"))
      ((string-match "linux/" bname) (c-set-style "linux-tabs-only"))
      ((string-match ".*" bname) (c-set-style "linux"))
      )))
