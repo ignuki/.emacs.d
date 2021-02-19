@@ -27,7 +27,6 @@ There are two things you can do about this warning:
   (package-refresh-contents)
   (package-install 'use-package)
   (package-install 'use-package-chords))
-
 (require 'use-package)
 (setq use-package-always-ensure t)
 
@@ -96,7 +95,8 @@ There are two things you can do about this warning:
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-tree)
-  (evil-set-initial-state 'term-mode 'emacs))
+  (evil-set-initial-state 'term-mode 'emacs)
+  (evil-set-initial-state 'dired-mode 'emacs))
 
 (use-package evil-collection
   :after (:all evil magit)
@@ -293,77 +293,68 @@ There are two things you can do about this warning:
   :mode (("\\.yml\\'" . yaml-mode)
 	 ("\\.yaml\\'" . yaml-mode)))
 
-(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
+;; Configure emacs general settings with use-package
 
-(setq frame-title-format
-      '(buffer-file-name "%f" (dired-directory dired-directory "%b"))
-      custom-file                       "~/.emacs.d/custom.el"
-      auth-source-save-behavior         nil
-      enable-local-variables            nil
-      inhibit-startup-screen            t
-      vc-follow-symlinks                t
-      inhibit-compacting-font-caches    1
-      mouse-wheel-scroll-amount         '(3 ((shift) . 3))
-      mouse-wheel-progressive-speed     nil
-      mouse-wheel-follow-mouse          't
-      scroll-conservatively             10000
-      scroll-step                       1
-      auto-save-interval                1000
-      auto-window-vscroll               nil
-      backup-by-copying                 t
-      backup-directory-alist            '(("." . "~/.saves"))
-      delete-old-versions               t
-      kept-new-versions                 6
-      kept-old-versions                 2
-      version-control                   t
-      backup-directory-alist            `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms    `((".*" ,temporary-file-directory t))
-      vc-mode                           1
-      ring-bell-function                'ignore
-      column-number-mode                1
-      savehist-mode                     1)
-
-(setq-default scroll-up-aggressively    0.01
-	      scroll-down-aggressively   0.01
-	      indent-tabs-mode           t
-	      tab-width                  8)
-
-(global-auto-revert-mode 1)
-(fringe-mode '(0 . 0))
-(show-paren-mode t)
-(electric-pair-mode 1)
-(global-hl-line-mode 1)
-(blink-cursor-mode 0)
-(setq blink-cursor-blinks 0)
-(display-time-mode 1)
-
-(defun remove-elc-on-save ()
-  "If you're saving an elisp file, likely the .elc is no longer valid."
-  (add-hook 'after-save-hook
-	    (lambda ()
-	      (if (file-exists-p (concat buffer-file-name "c"))
-		  (delete-file (concat buffer-file-name "c"))))
-	    nil
-	    t))
-
-(add-hook 'emacs-lisp-mode-hook 'remove-elc-on-save)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-
-(defun gcm-scroll-down () (interactive) (scroll-up 1))
-
-(defun gcm-scroll-up () (interactive) (scroll-down 1))
-
-(global-set-key [(control down)] 'gcm-scroll-down)
-(global-set-key [(control up)]   'gcm-scroll-up)
-
-(global-set-key [(control next)] 'gcm-scroll-down)
-(global-set-key [(control prior)]   'gcm-scroll-up)
+(use-package emacs
+  :init
+  (defun remove-elc ()
+    "If you're saving an elisp file, likely the .elc is no longer valid."
+    (if (file-exists-p (concat buffer-file-name "c"))
+	(delete-file (concat buffer-file-name "c"))))
+  (defun gcm-scroll-down () (interactive) (scroll-up 1))
+  (defun gcm-scroll-up () (interactive) (scroll-down 1))
+  :config
+  (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+  (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
+  (setq frame-title-format
+	'(buffer-file-name "%f" (dired-directory dired-directory "%b"))
+	custom-file                       "~/.emacs.d/custom.el"
+	auth-source-save-behavior      nil
+	enable-local-variables         nil
+	inhibit-startup-screen         t
+	vc-follow-symlinks             t
+	inhibit-compacting-font-caches 1
+	mouse-wheel-scroll-amount      '(3 ((shift) . 3))
+	mouse-wheel-progressive-speed  nil
+	mouse-wheel-follow-mouse       't
+	scroll-conservatively          10000
+	scroll-step                    1
+	auto-save-interval             1000
+	auto-window-vscroll            nil
+	backup-by-copying              t
+	backup-directory-alist         '(("." . "~/.saves"))
+	delete-old-versions            t
+	kept-new-versions              6
+	kept-old-versions              2
+	version-control                t
+	backup-directory-alist         `((".*" . ,temporary-file-directory))
+	auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+	vc-mode                        1
+	ring-bell-function             'ignore
+	column-number-mode             1
+	savehist-mode                  1)
+  (setq-default scroll-up-aggressively   0.01
+		scroll-down-aggressively 0.01
+		indent-tabs-mode         t
+		tab-width                8)
+  (global-auto-revert-mode 1)
+  (fringe-mode '(0 . 0))
+  (global-hl-line-mode 1)
+  (blink-cursor-mode 0)
+  (setq blink-cursor-blinks 0)
+  (display-time-mode 1)
+  (electric-pair-mode 1)
+  (show-paren-mode t)
+  (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+  (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+  (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+  (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+  (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+  :bind (("C-<down>" . gcm-scroll-down)
+	 ("C-<next>" . gcm-scroll-down)
+	 ("C-<up>" . gcm-scroll-up)
+	 ("C-<prior>" . gcm-scroll-up))
+  :hook ((before-save . delete-trailing-whitespace)
+	 (after-save . remove-elc)))
