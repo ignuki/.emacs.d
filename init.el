@@ -251,7 +251,11 @@ There are two things you can do about this warning:
 		(concatenate 'string term-ansi-at-dir "/")
 	      (format "/%s@%s:%s/" term-ansi-at-user term-ansi-at-host term-ansi-at-dir))))
     message)
-  :hook (term-mode . (lambda () (setq-local global-hl-line-mode nil))))
+  (setq term-scroll-to-bottom-on-output t)
+  (setq term-suppress-hard-newline t)
+  :hook ((term-mode . (lambda ()
+			(linum-mode -1)
+			(setq-local global-hl-line-mode nil)))))
 
 (use-package terraform-mode)
 
