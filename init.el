@@ -56,14 +56,18 @@ There are two things you can do about this warning:
   :config
   (editorconfig-mode 1))
 
-
 (use-package evil
+  :after (:all undo-tree term)
   :init
   (setq evil-want-fine-undo t
 	evil-want-keybinding nil)
-  :config (evil-mode 1))
+  :config
+  (evil-mode 1)
+  (evil-set-undo-system 'undo-tree)
+  (evil-set-initial-state 'term-mode 'emacs))
 
 (use-package evil-collection
+  :after evil
   :init
   (setq evil-magit-state 'normal))
 
@@ -98,6 +102,7 @@ There are two things you can do about this warning:
 (use-package magit-popup)
 
 (use-package multi-term
+  :after term
   :bind (([f5] . multi-term)
 	 ("C-<next>" . multi-term-next)
 	 ("C-<prior>" . multi-term-prev))
@@ -193,7 +198,8 @@ There are two things you can do about this warning:
   (setq undo-limit 40000
 	undo-strong-limit 60000)
   undo-tree-auto-save-history       t
-  undo-tree-history-directory-alist '(("." . "~/.undo-tree")))
+  undo-tree-history-directory-alist '(("." . "~/.undo-tree"))
+  (global-undo-tree-mode))
 
 (use-package web-mode
   :mode ("\\.html\\'" . web-mode)
@@ -261,6 +267,7 @@ There are two things you can do about this warning:
 (electric-pair-mode 1)
 (global-hl-line-mode 1)
 (blink-cursor-mode 0)
+(setq blink-cursor-blinks 0)
 (display-time-mode 1)
 
 (load "~/.emacs.d/lisp/plsql.el")
@@ -361,4 +368,5 @@ There are two things you can do about this warning:
 
 (add-hook 'find-file-hook (lambda () (linum-mode 1)))
 (add-hook 'eshell-mode-hook (lambda () (linum-mode -1)))
+(add-hook 'term-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
 (linum-mode t)
