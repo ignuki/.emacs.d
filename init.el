@@ -1,3 +1,5 @@
+;; Setup package repositories and install use-package if needed
+
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq package-check-signature nil)
 
@@ -12,9 +14,7 @@ which is unsafe because it allows man-in-the-middle attacks.
 There are two things you can do about this warning:
 1. Install an Emacs version that does support SSL and be safe.
 2. Remove this warning from your init file so you won't see it again."))
-  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/"))))
@@ -31,18 +31,44 @@ There are two things you can do about this warning:
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; Configure packages with use-package
+
 (use-package asm-mode
   :config
   (setq asm-comment-char ?\#)
-  :mode ("\\.s\\'" . asm-mode)
-  :mode ("\\.S\\'" . asm-mode)
-  :mode ("\\.asm\\'" . asm-mode))
+  :mode (("\\.s\\'" . asm-mode)
+	 ("\\.S\\'" . asm-mode)
+	 ("\\.asm\\'" . asm-mode)))
 
 (use-package async)
 
-(use-package cargo
+(use-package cc-mode
   :init
-  (add-hook 'rust-mode-hook 'cargo-minor-mode))
+  (defun c-lineup-arglist-tabs-only (ignored)
+    "Line up argument lists by tabs, not spaces"
+    (let* ((anchor (c-langelem-pos c-syntactic-element))
+	   (column (c-langelem-2nd-pos c-syntactic-element))
+	   (offset (- (1+ column) anchor))
+	   (steps (floor offset c-basic-offset)))
+      (* (max steps 1)
+	 c-basic-offset)))
+
+  (c-add-style "linux-tabs-only"
+	       '("linux" (c-offsets-alist
+			  (arglist-cont-nonempty
+			   c-lineup-gcc-asm-reg
+			   c-lineup-arglist-tabs-only))))
+
+  (defun set-c-styles ()
+    (setq indent-tabs-mode t)
+    (setq show-trailing-whitespace t)
+    (c-set-style "linux-tabs-only"))
+
+  :hook (c-mode . set-c-styles))
+
+(use-package cargo
+  :after rust-mode
+  :hook rust-mode)
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
@@ -51,8 +77,10 @@ There are two things you can do about this warning:
 (use-package dracula-theme
   :config (load-theme 'dracula t))
 
+(use-package dockerfile-mode
+  :mode ("Dockerfile\\'" . dockerfile-mode))
+
 (use-package editorconfig
-  :ensure t
   :config
   (editorconfig-mode 1))
 
@@ -67,12 +95,12 @@ There are two things you can do about this warning:
   (evil-set-initial-state 'term-mode 'emacs))
 
 (use-package evil-collection
-  :after evil
+  :after (:all evil magit)
   :init
   (setq evil-magit-state 'normal))
 
 (use-package fill-column-indicator
-  :init
+  :config
   (setq fci-rule-column 90))
 
 (use-package git-commit)
@@ -103,40 +131,11 @@ There are two things you can do about this warning:
 
 (use-package multi-term
   :after term
-  :bind (([f5] . multi-term)
-	 ("C-<next>" . multi-term-next)
-	 ("C-<prior>" . multi-term-prev))
   :config
   (setq multi-term-buffer-name "term"
-	multi-term-program "/bin/bash"))
-
-(use-package nasm-mode
-  :mode ("\\.nasm\\'" . nasm-mode))
-
-(use-package pkg-info)
-
-(use-package python
-  :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python" . python-mode))
-
-(use-package rust-mode
-  :init
-  (setq rust-format-on-save t)
-  :mode ("\\.rs\\'" . rust-mode))
-
-(use-package s)
-
-(use-package swiper
-  :bind (("C-s" . swiper)))
-
-(use-package term
-  :config
-  (setq term-bind-key-alist
+	multi-term-program "/bin/bash"
+	term-bind-key-alist
 	(list (cons "C-c C-c" 'term-interrupt-subjob)
-	      (cons "C-p" 'previous-line)
-	      (cons "C-n" 'next-line)
-	      (cons "M-f" 'term-send-forward-word)
-	      (cons "M-b" 'term-send-backward-word)
 	      (cons "C-c C-j" 'term-line-mode)
 	      (cons "C-c C-k" 'term-char-mode)
 	      (cons "M-DEL" 'term-send-backward-kill-word)
@@ -144,10 +143,41 @@ There are two things you can do about this warning:
 	      (cons "<C-left>" 'term-send-backward-word)
 	      (cons "<C-right>" 'term-send-forward-word)
 	      (cons "C-r" 'term-send-reverse-search-history)
-	      (cons "M-p" 'term-send-raw-meta)
-	      (cons "M-y" 'term-send-raw-meta)
 	      (cons "C-y" 'term-send-raw)))
-					; https://web.archive.org/web/20181111010613/http://paralambda.org/2012/07/02/using-gnu-emacs-as-a-terminal-emulator/
+  :bind (([f5] . multi-term)
+	 ("C-<tab>" . multi-term-next)
+	 ("C-<iso-lefttab>" . multi-term-prev)))
+
+(use-package nasm-mode
+  :mode ("\\.nasm\\'" . nasm-mode))
+
+(use-package pkg-info)
+
+(use-package plsql
+  :load-path "~/.emacs.d/lisp/plsql.el"
+  :mode ("\\.plsql\\'" . plsql-mode))
+
+(use-package python
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode))
+
+(use-package rust-mode
+  :config
+  (setq rust-format-on-save t)
+  :mode ("\\.rs\\'" . rust-mode))
+
+(use-package s)
+
+(use-package sh-script
+  :hook (sh-mode . (lambda () (setq indent-tabs-mode nil))))
+
+(use-package swiper
+  :bind (("C-s" . swiper)))
+
+(use-package term
+  :config
+  ;; https://web.archive.org/web/20181111010613/ ->
+  ;; ->    http://paralambda.org/2012/07/02/using-gnu-emacs-as-a-terminal-emulator/
   (defun term-handle-ansi-terminal-messages (message)
     (while (string-match "\eAnSiT.+\n" message)
       ;; Extract the command code and the argument.
@@ -179,10 +209,12 @@ There are two things you can do about this warning:
       (setq buffer-file-name
 	    (format "%s@%s:%s" term-ansi-at-user term-ansi-at-host term-ansi-at-dir))
       (set-buffer-modified-p nil)
-      (setq default-directory (if (string= term-ansi-at-host (system-name))
-				  (concatenate 'string term-ansi-at-dir "/")
-				(format "/%s@%s:%s/" term-ansi-at-user term-ansi-at-host term-ansi-at-dir))))
-    message))
+      (setq default-directory
+	    (if (string= term-ansi-at-host (system-name))
+		(concatenate 'string term-ansi-at-dir "/")
+	      (format "/%s@%s:%s/" term-ansi-at-user term-ansi-at-host term-ansi-at-dir))))
+    message)
+  :hook (term-mode . (lambda () (setq-local global-hl-line-mode nil))))
 
 (use-package terraform-mode)
 
@@ -190,38 +222,39 @@ There are two things you can do about this warning:
   :mode ("\\.toml\\'" . toml-mode))
 
 (use-package tramp
-  :init
+  :config
   (setq tramp-default-method "ssh"))
 
 (use-package undo-tree
-  :config
+  :init
   (setq undo-limit 40000
-	undo-strong-limit 60000)
-  undo-tree-auto-save-history       t
-  undo-tree-history-directory-alist '(("." . "~/.undo-tree"))
+	undo-strong-limit 60000
+	undo-tree-auto-save-history t
+	undo-tree-history-directory-alist '(("." . "~/.undo-tree")))
+  :config
   (global-undo-tree-mode))
 
 (use-package web-mode
-  :mode ("\\.html\\'" . web-mode)
-  :mode ("\\.js\\'" . web-mode)
-  :mode ("\\.css\\'" . web-mode)
-  :mode ("\\.tpl\\.php\\'" . web-mode)
-  :mode ("\\.[agj]sp\\'" . web-mode)
-  :mode ("\\.as[cp]x\\'" . web-mode)
-  :mode ("\\.erb\\'" . web-mode)
-  :mode ("\\.mustache\\'" . web-mode)
-  :mode ("\\.djhtml\\'" . web-mode)
-  :mode ("\\.html?\\'" . web-mode)
   :init
   (setq web-mode-markup-indent-offset 2
 	web-mode-code-indent-offset 2
-	web-mode-css-indent-offset 2))
+	web-mode-css-indent-offset 2)
+  :mode (("\\.html\\'" . web-mode)
+	 ("\\.js\\'" . web-mode)
+	 ("\\.css\\'" . web-mode)
+	 ("\\.tpl\\.php\\'" . web-mode)
+	 ("\\.[agj]sp\\'" . web-mode)
+	 ("\\.as[cp]x\\'" . web-mode)
+	 ("\\.erb\\'" . web-mode)
+	 ("\\.mustache\\'" . web-mode)
+	 ("\\.djhtml\\'" . web-mode)
+	 ("\\.html?\\'" . web-mode)))
 
 (use-package with-editor)
 
 (use-package yaml-mode
-  :mode ("\\.yml\\'" . yaml-mode)
-  :mode ("\\.yaml\\'" . yaml-mode))
+  :mode (("\\.yml\\'" . yaml-mode)
+	 ("\\.yaml\\'" . yaml-mode)))
 
 (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -270,41 +303,6 @@ There are two things you can do about this warning:
 (setq blink-cursor-blinks 0)
 (display-time-mode 1)
 
-(load "~/.emacs.d/lisp/plsql.el")
-(load "~/.emacs.d/lisp/dockerfile-mode.el")
-(add-to-list 'auto-mode-alist
-	     '("\\.\\(p\\(?:k[bg]\\|ls\\)\\|sql\\)\\'" . plsql-mode))
-(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
-
-(defun c-lineup-arglist-tabs-only (ignored)
-  "Line up argument lists by tabs, not spaces"
-  (let* ((anchor (c-langelem-pos c-syntactic-element))
-	 (column (c-langelem-2nd-pos c-syntactic-element))
-	 (offset (- (1+ column) anchor))
-	 (steps (floor offset c-basic-offset)))
-    (* (max steps 1)
-       c-basic-offset)))
-
-(add-hook 'c-mode-common-hook
-	  (lambda ()
-	    ;; Add kernel style
-	    (c-add-style "linux-tabs-only"
-			 '("linux"
-			   (c-offsets-alist
-			    (arglist-cont-nonempty
-			     c-lineup-gcc-asm-reg
-			     c-lineup-arglist-tabs-only))))))
-
-(defun my-c-mode-hooks ()
-  (let ((bname (buffer-file-name)))
-    (cond
-     ((string-match "linux/" bname) (c-set-style "linux-tabs-only"))
-     ((string-match ".*" bname) (c-set-style "linux"))
-     )))
-
-(add-hook 'sh-mode-hook
-	  (lambda () (setq indent-tabs-mode nil)))
-
 (defun remove-elc-on-save ()
   "If you're saving an elisp file, likely the .elc is no longer valid."
   (add-hook 'after-save-hook
@@ -315,7 +313,6 @@ There are two things you can do about this warning:
 	    t))
 
 (add-hook 'emacs-lisp-mode-hook 'remove-elc-on-save)
-(add-hook 'c-mode-hook 'my-c-mode-hooks)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
@@ -368,5 +365,4 @@ There are two things you can do about this warning:
 
 (add-hook 'find-file-hook (lambda () (linum-mode 1)))
 (add-hook 'eshell-mode-hook (lambda () (linum-mode -1)))
-(add-hook 'term-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
 (linum-mode t)
