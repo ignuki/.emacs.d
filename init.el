@@ -72,7 +72,8 @@ There are two things you can do about this warning:
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
-	 ("C-x C-f" . counsel-find-file)))
+	 ("C-x C-f" . counsel-find-file))
+  :hook (find-file . (lambda () (linum-mode 1))))
 
 (use-package dracula-theme
   :config (load-theme 'dracula t))
@@ -83,6 +84,9 @@ There are two things you can do about this warning:
 (use-package editorconfig
   :config
   (editorconfig-mode 1))
+
+(use-package eshell
+  :hook (eshell-mode . (lambda () (linum-mode -1))))
 
 (use-package evil
   :after (:all undo-tree term)
@@ -124,6 +128,39 @@ There are two things you can do about this warning:
 
 (use-package less-css-mode
   :mode ("\\.less\\'" . less-css-mode))
+
+(use-package linum
+  :init
+  (defvar linum-current-line 1 "Current line number.")
+  (defvar linum-format-fmt   "" " ")
+  (defvar linum-format "" " ")
+  (defface linum-current-line
+    `((t :inherit linum
+	 :foreground "chocolate"
+	 :weight bold
+	 ))
+    "Face for displaying the current line number."
+    :group 'linum)
+  :config
+  (defadvice linum-update (before advice-linum-update activate)
+    "Set the current line."
+    (setq linum-current-line (line-number-at-pos)))
+
+  (defun custom-linum-numbering ()
+    (setq-local linum-format-fmt
+		(let ((width
+		       (length (number-to-string (count-lines (point-min) (point-max))))))
+		  (concat " %" (number-to-string width) "d "))))
+
+  (defun linum-format-func (line)
+    (let ((face
+	   (if (= line linum-current-line)
+	       'linum-current-line 'linum)))
+      (propertize (format linum-format-fmt line) 'face face)))
+
+  (setq linum-format 'linum-format-func)
+  (linum-mode t)
+  :hook (linum-before-numbering . custom-linum-numbering))
 
 (use-package magit)
 
@@ -330,39 +367,3 @@ There are two things you can do about this warning:
 
 (global-set-key [(control next)] 'gcm-scroll-down)
 (global-set-key [(control prior)]   'gcm-scroll-up)
-
-(defvar linum-current-line 1 "Current line number.")
-(defvar linum-format-fmt   "" " ")
-(defvar linum-format "" " ")
-
-(defface linum-current-line
-  `((t :inherit linum
-       :foreground "chocolate"
-       :weight bold
-       ))
-  "Face for displaying the current line number."
-  :group 'linum)
-
-(defadvice linum-update (before advice-linum-update activate)
-  "Set the current line."
-  (setq linum-current-line (line-number-at-pos)))
-
-(add-hook 'linum-before-numbering-hook
-	  (lambda ()
-	    (setq-local linum-format-fmt
-			(let ((w (length (number-to-string (count-lines
-							    (point-min)
-							    (point-max))))))
-			  (concat " %" (number-to-string w) "d ")))))
-
-(defun linum-format-func (line)
-  (let ((face
-	 (if (= line linum-current-line)
-	     'linum-current-line 'linum)))
-    (propertize (format linum-format-fmt line) 'face face)))
-
-(setq linum-format 'linum-format-func)
-
-(add-hook 'find-file-hook (lambda () (linum-mode 1)))
-(add-hook 'eshell-mode-hook (lambda () (linum-mode -1)))
-(linum-mode t)
