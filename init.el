@@ -267,12 +267,11 @@ There are two things you can do about this warning:
   (setq tramp-default-method "ssh"))
 
 (use-package undo-tree
-  :init
+  :config
   (setq undo-limit 40000
 	undo-strong-limit 60000
 	undo-tree-auto-save-history t
 	undo-tree-history-directory-alist '(("." . "~/.undo-tree")))
-  :config
   (global-undo-tree-mode))
 
 (use-package web-mode
