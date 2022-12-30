@@ -32,6 +32,9 @@ There are two things you can do about this warning:
 
 ;; Configure packages with use-package
 
+(use-package all-the-icons
+  :ensure t)
+
 (use-package asm-mode
   :config
   (setq asm-comment-char ?\#)
@@ -74,6 +77,31 @@ There are two things you can do about this warning:
 	 ("C-x C-f" . counsel-find-file))
   :hook (find-file . (lambda () (linum-mode 1))))
 
+(use-package dashboard
+  :ensure t
+  :init
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-startup-banner 1
+	dashboard-banner-logo-title "Beep boop."
+	dashboard-center-content t
+	dashboard-set-heading-icons t
+	dashboard-set-file-icons t
+	dashboard-show-shortcuts t
+	dashboard-set-navigator t
+	dashboard-set-init-info t)
+  (setq dashboard-items '((recents  . 10)
+                          (bookmarks . 10)
+                          (registers . 5)))
+  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+  (add-hook 'server-after-make-frame-hook
+            (lambda ()
+	      (switch-to-buffer dashboard-buffer-name)
+	      (dashboard-mode)
+	      (dashboard-insert-startupify-lists)
+	      (dashboard-refresh-buffer))))
+
+
 (use-package dracula-theme
   :config (load-theme 'dracula t))
 
@@ -92,11 +120,24 @@ There are two things you can do about this warning:
   :init
   (setq evil-want-fine-undo t
 	evil-want-keybinding nil)
+  (defun evil-custom-exit ()
+    (interactive)
+    (if (= (length (window-list)) 1)
+	(tab-bar-close-tab)
+      (delete-window)))
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-tree)
+  (define-key evil-normal-state-map "\C-t" nil)
+  (define-key evil-motion-state-map "\C-t" nil)
+  (define-key evil-normal-state-map "\C-w" nil)
+  (define-key evil-motion-state-map "\C-w" nil)
+  (define-key evil-motion-state-map "\C-f" nil)
   (evil-set-initial-state 'term-mode 'emacs)
-  (evil-set-initial-state 'dired-mode 'emacs))
+  (evil-set-initial-state 'neotree-mode 'emacs)
+  (evil-set-initial-state 'dired-mode 'emacs)
+  (evil-set-initial-state 'dashboard-mode 'emacs)
+  (evil-ex-define-cmd "q" #'evil-custom-exit))
 
 (use-package evil-collection
   :after (:all evil magit)
@@ -118,6 +159,30 @@ There are two things you can do about this warning:
   :mode ("\\.hs\\'" . haskell-mode)
   :interpreter ("haskell" . haskell-mode))
 
+(use-package hideshow
+  :hook ((prog-mode . hs-minor-mode))
+  :init
+  (defun hs-toggle-hiding-fixed (&optional e)
+    "Toggle hiding/showing of a block.
+See `hs-hide-block' and `hs-show-block'.
+Argument E should be the event that triggered this action."
+    (interactive)
+    (hs-life-goes-on
+     (when e (posn-set-point (event-end e)))
+     ;; (posn-set-point (event-end e))
+     (if (hs-already-hidden-p)
+	 (hs-show-block)
+       (hs-hide-block))))
+
+  (defun toggle-fold ()
+    (interactive)
+    (save-excursion
+      (end-of-line)
+      (hs-toggle-hiding-fixed)))
+  :config
+  (advice-add 'hs-toggle-hiding :override #'hs-toggle-hiding-fixed))
+
+
 (use-package ivy
   :init
   (setq ivy-use-virtual-buffers t
@@ -125,6 +190,10 @@ There are two things you can do about this warning:
 	ivy-display-style nil)
   :config
   (ivy-mode 1))
+
+(use-package json-mode
+  :mode (("\\.json\\'" . json-mode)
+	 ("\\.json.tmpl\\'" . json-mode)))
 
 (use-package less-css-mode
   :mode ("\\.less\\'" . less-css-mode))
@@ -182,17 +251,40 @@ There are two things you can do about this warning:
 	      (cons "C-r" 'term-send-reverse-search-history)
 	      (cons "C-y" 'term-send-raw)))
   :bind (([f5] . multi-term)
-	 ("C-<tab>" . multi-term-next)
-	 ("C-<iso-lefttab>" . multi-term-prev)))
+	 ("C-M-<tab>" . multi-term-next)
+	 ("C-M-<iso-lefttab>" . multi-term-prev)))
 
 (use-package nasm-mode
   :mode ("\\.nasm\\'" . nasm-mode))
+
+(use-package neotree
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+  (add-hook 'server-after-make-frame-hook
+	    (lambda ()
+	      (setq neo-theme (if (display-graphic-p) 'icons 'arrow))))
+  (add-hook 'neotree-mode-hook
+            (lambda ()
+	      (local-set-key (kbd "C-f") #'neotree-toggle)
+	      (local-set-key (kbd "RET") #'neotree-change-root)))
+  :bind
+  ("C-f" . neotree-find)
+  ([f8] . neotree-toggle))
+
+(use-package page-break-lines
+  :config
+  (page-break-lines-mode t))
 
 (use-package pkg-info)
 
 (use-package plsql
   :load-path "~/.emacs.d/lisp/plsql.el"
   :mode ("\\.plsql\\'" . plsql-mode))
+
+(use-package pragmatapro-lig
+  :load-path "~/.emacs.d/lisp/pragmatapro-lig.el"
+  :config
+  (pragmatapro-lig-global-mode))
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
@@ -210,6 +302,71 @@ There are two things you can do about this warning:
 
 (use-package swiper
   :bind (("C-s" . swiper)))
+
+(use-package tab-bar
+  :after dracula-theme
+  :bind
+  ("C-t" . tab-bar-new-tab)
+  ("C-w" . tab-bar-close-tab)
+  ("C-<tab>" . tab-bar-switch-to-next-tab)
+  ("C-<iso-lefttab>" . tab-bar-switch-to-prev-tab)
+  :custom
+  (tab-bar-show                     1)
+  (tab-bar-close-button-show        nil)
+  (tab-bar-new-tab-choice           "*dashboard*")
+  (tab-bar-tab-hints                t)
+  (tab-bar-separator                "")
+  (tab-bar-format                   '(tab-bar-format-tabs tab-bar-separator))
+  (tab-bar-tab-name-format-function #'custom-tab-bar-tab-name-format-default)
+  (tab-bar-close-last-tab-choice    'delete-frame)
+  :init
+  (defgroup custom-tab-bar nil
+    "Custom tweaks to tar-bar-mode."
+    :group 'tab-bar)
+  (defface custom-tab-bar-tab
+    `((t :inherit 'tab-bar-tab
+         :foreground "SeaGreen2"))
+    "Face for active tab in tab-bar."
+    :group 'custom-tab-bar)
+  (defface custom-tab-bar-tab-hint
+    `((t :inherit 'custom-tab-bar-tab
+         :foreground "deep pink"))
+    "Face for active tab hint in tab-bar."
+    :group 'custom-tab-bar)
+  (defface custom-tab-bar-tab-inactive
+    `((t :inherit 'tab-bar-tab-inactive
+         :foreground "dark gray"))
+    "Face for inactive tab in tab-bar."
+    :group 'custom-tab-bar)
+  (defface custom-tab-bar-tab-hint-inactive
+    `((t :inherit 'custom-tab-bar-tab-inactive
+         :foreground "thistle"))
+    "Face for inactive tab hint in tab-bar."
+    :group 'custom-tab-bar)
+  (defun custom-tab-bar-tab-name-format-default (tab i)
+    (let* ((current-p (eq (car tab) 'current-tab))
+           (tab-face (if (and current-p (display-graphic-p))
+                         'custom-tab-bar-tab
+                       'custom-tab-bar-tab-inactive))
+           (hint-face (if (and current-p (display-graphic-p))
+                          'custom-tab-bar-tab-hint
+                        'custom-tab-bar-tab-hint-inactive)))
+      (concat (propertize (if tab-bar-tab-hints
+			      (format "  %d:" (- i 1))
+			    "  ")
+                          'face hint-face)
+              (propertize
+               (concat
+                (alist-get 'name tab)
+                (or (and tab-bar-close-button-show
+                         (not (eq tab-bar-close-button-show
+                                  (if current-p 'non-selected 'selected)))
+                         tab-bar-close-button)
+                    "")
+                "  ")
+               'face tab-face))))
+  :config
+  (tab-bar-mode t)
 
 (use-package term
   :config
@@ -294,6 +451,8 @@ There are two things you can do about this warning:
 
 (use-package yaml-mode
   :mode (("\\.yml\\'" . yaml-mode)
+	 ("\\.yml.tmpl\\'" . yaml-mode)
+	 ("\\.yaml.tmpl\\'" . yaml-mode)
 	 ("\\.yaml\\'" . yaml-mode)))
 
 ;; Configure emacs general settings with use-package
@@ -306,7 +465,9 @@ There are two things you can do about this warning:
 	(delete-file (concat buffer-file-name "c"))))
   (defun gcm-scroll-down () (interactive) (scroll-up 1))
   (defun gcm-scroll-up () (interactive) (scroll-down 1))
+  (global-prettify-symbols-mode +1)
   :config
+  (add-to-list 'default-frame-alist '(tab-bar . custom-tab-bar))
   (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -314,34 +475,47 @@ There are two things you can do about this warning:
   (setq frame-title-format
 	'(buffer-file-name "%f" (dired-directory dired-directory "%b"))
 	custom-file                       "~/.emacs.d/custom.el"
-	auth-source-save-behavior      nil
-	enable-local-variables         nil
-	inhibit-startup-screen         t
-	vc-follow-symlinks             t
-	inhibit-compacting-font-caches 1
-	mouse-wheel-scroll-amount      '(3 ((shift) . 3))
-	mouse-wheel-progressive-speed  nil
-	mouse-wheel-follow-mouse       't
-	scroll-conservatively          10000
-	scroll-step                    1
-	auto-save-interval             1000
-	auto-window-vscroll            nil
-	backup-by-copying              t
-	backup-directory-alist         '(("." . "~/.saves"))
-	delete-old-versions            t
-	kept-new-versions              6
-	kept-old-versions              2
-	version-control                t
-	backup-directory-alist         `((".*" . ,temporary-file-directory))
-	auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
-	vc-mode                        1
-	ring-bell-function             'ignore
-	column-number-mode             1
-	savehist-mode                  1)
+	auth-source-save-behavior         nil
+	enable-local-variables            nil
+	inhibit-startup-screen            t
+	vc-follow-symlinks                t
+	inhibit-compacting-font-caches    1
+	mouse-wheel-scroll-amount         '(3 ((shift) . 3))
+	mouse-wheel-progressive-speed     nil
+	mouse-wheel-follow-mouse          't
+	scroll-conservatively             10000
+	scroll-step                       1
+	auto-save-interval                1000
+	auto-window-vscroll               nil
+	backup-by-copying                 t
+	backup-directory-alist            '(("." . "~/.saves"))
+	delete-old-versions               t
+	kept-new-versions                 6
+	kept-old-versions                 2
+	kmacro-ring-max                   30
+	version-control                   t
+	backup-directory-alist            `((".*" . ,temporary-file-directory))
+	auto-save-file-name-transforms    `((".*" ,temporary-file-directory t))
+	vc-mode                           1
+	ring-bell-function                'ignore
+	column-number-mode                1
+	savehist-mode                     1
+	x-stretch-cursor                  t
+	inhibit-startup-message           t
+	initial-scratch-message           ""
+	inhibit-startup-echo-area-message t)
+  ;;
   (setq-default scroll-up-aggressively   0.01
 		scroll-down-aggressively 0.01
 		indent-tabs-mode         t
 		tab-width                8)
+  (set-frame-font "PragmataPro Mono Liga 13" nil t)
+  (add-to-list 'default-frame-alist '(font . "PragmataPro Mono Liga 13"))
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (set-face-attribute 'tab-bar nil :font "PragmataPro Mono Liga 13")
+  (add-hook 'server-after-make-frame-hook
+	    (lambda ()
+	      (set-face-attribute 'tab-bar nil :font "PragmataPro Mono Liga 13"))))
   (global-auto-revert-mode 1)
   (fringe-mode '(0 . 0))
   (global-hl-line-mode 1)
@@ -355,6 +529,9 @@ There are two things you can do about this warning:
   (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
   (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
   (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+  (bind-keys :prefix-map toggle-map
+	     :prefix "C-x t"
+	     ("f" . toggle-fold))
   :bind (("C-<down>" . gcm-scroll-down)
 	 ("C-<next>" . gcm-scroll-down)
 	 ("C-<up>" . gcm-scroll-up)

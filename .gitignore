@@ -1,10 +1,12 @@
 transient/
 elpa/
+eln-cache/
 eshell/
 auto-save-list/
 recentf
 network-security.data
 *.elc
+*.eld
 themes/*.elc
 *.*~
 custom.el
