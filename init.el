@@ -73,6 +73,11 @@ There are two things you can do about this warning:
   :hook rust-mode)
 
 (use-package counsel
+  :config
+  (let ((done (where-is-internal #'ivy-done     ivy-minibuffer-map t))
+        (alt  (where-is-internal #'ivy-alt-done ivy-minibuffer-map t)))
+    (define-key counsel-find-file-map done #'ivy-alt-done)
+    (define-key counsel-find-file-map alt  #'ivy-done))
   :bind (("M-x" . counsel-M-x)
 	 ("C-x C-f" . counsel-find-file))
   :hook (find-file . (lambda () (linum-mode 1))))
@@ -91,11 +96,11 @@ There are two things you can do about this warning:
 	dashboard-set-navigator t
 	dashboard-set-init-info t)
   (setq dashboard-items '((recents  . 10)
-                          (bookmarks . 10)
-                          (registers . 5)))
+			  (bookmarks . 10)
+			  (registers . 5)))
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
   (add-hook 'server-after-make-frame-hook
-            (lambda ()
+	    (lambda ()
 	      (switch-to-buffer dashboard-buffer-name)
 	      (dashboard-mode)
 	      (dashboard-insert-startupify-lists)
@@ -116,7 +121,7 @@ There are two things you can do about this warning:
   :hook (eshell-mode . (lambda () (linum-mode -1))))
 
 (use-package evil
-  :after (:all undo-tree term)
+  :after (:all undo-tree)
   :init
   (setq evil-want-fine-undo t
 	evil-want-keybinding nil)
@@ -133,7 +138,6 @@ There are two things you can do about this warning:
   (define-key evil-normal-state-map "\C-w" nil)
   (define-key evil-motion-state-map "\C-w" nil)
   (define-key evil-motion-state-map "\C-f" nil)
-  (evil-set-initial-state 'term-mode 'emacs)
   (evil-set-initial-state 'neotree-mode 'emacs)
   (evil-set-initial-state 'dired-mode 'emacs)
   (evil-set-initial-state 'dashboard-mode 'emacs)
@@ -180,8 +184,9 @@ Argument E should be the event that triggered this action."
       (end-of-line)
       (hs-toggle-hiding-fixed)))
   :config
-  (advice-add 'hs-toggle-hiding :override #'hs-toggle-hiding-fixed))
-
+  (advice-add 'hs-toggle-hiding :override #'hs-toggle-hiding-fixed)
+  :bind
+  (("C-SPC" . toggle-fold)))
 
 (use-package ivy
   :init
@@ -235,24 +240,13 @@ Argument E should be the event that triggered this action."
 
 (use-package magit-popup)
 
-(use-package multi-term
-  :after term
+(use-package mini-frame
+  :init
+  (setq x-gtk-resize-child-frames 'resize-mode
+	mini-frame-show-parameters '((top . 10.0) (width . 1.0) (left . 0.0)))
   :config
-  (setq multi-term-buffer-name "term"
-	multi-term-program "/bin/bash"
-	term-bind-key-alist
-	(list (cons "C-c C-c" 'term-interrupt-subjob)
-	      (cons "C-c C-j" 'term-line-mode)
-	      (cons "C-c C-k" 'term-char-mode)
-	      (cons "M-DEL" 'term-send-backward-kill-word)
-	      (cons "M-d" 'term-send-forward-kill-word)
-	      (cons "<C-left>" 'term-send-backward-word)
-	      (cons "<C-right>" 'term-send-forward-word)
-	      (cons "C-r" 'term-send-reverse-search-history)
-	      (cons "C-y" 'term-send-raw)))
-  :bind (([f5] . multi-term)
-	 ("C-M-<tab>" . multi-term-next)
-	 ("C-M-<iso-lefttab>" . multi-term-prev)))
+  (add-to-list 'mini-frame-ignore-commands 'evil-ex)
+  (mini-frame-mode t))
 
 (use-package nasm-mode
   :mode ("\\.nasm\\'" . nasm-mode))
@@ -264,7 +258,7 @@ Argument E should be the event that triggered this action."
 	    (lambda ()
 	      (setq neo-theme (if (display-graphic-p) 'icons 'arrow))))
   (add-hook 'neotree-mode-hook
-            (lambda ()
+	    (lambda ()
 	      (local-set-key (kbd "C-f") #'neotree-toggle)
 	      (local-set-key (kbd "RET") #'neotree-change-root)))
   :bind
@@ -325,94 +319,48 @@ Argument E should be the event that triggered this action."
     :group 'tab-bar)
   (defface custom-tab-bar-tab
     `((t :inherit 'tab-bar-tab
-         :foreground "SeaGreen2"))
+	 :foreground "SeaGreen2"))
     "Face for active tab in tab-bar."
     :group 'custom-tab-bar)
   (defface custom-tab-bar-tab-hint
     `((t :inherit 'custom-tab-bar-tab
-         :foreground "deep pink"))
+	 :foreground "deep pink"))
     "Face for active tab hint in tab-bar."
     :group 'custom-tab-bar)
   (defface custom-tab-bar-tab-inactive
     `((t :inherit 'tab-bar-tab-inactive
-         :foreground "dark gray"))
+	 :foreground "dark gray"))
     "Face for inactive tab in tab-bar."
     :group 'custom-tab-bar)
   (defface custom-tab-bar-tab-hint-inactive
     `((t :inherit 'custom-tab-bar-tab-inactive
-         :foreground "thistle"))
+	 :foreground "thistle"))
     "Face for inactive tab hint in tab-bar."
     :group 'custom-tab-bar)
   (defun custom-tab-bar-tab-name-format-default (tab i)
     (let* ((current-p (eq (car tab) 'current-tab))
-           (tab-face (if (and current-p (display-graphic-p))
-                         'custom-tab-bar-tab
-                       'custom-tab-bar-tab-inactive))
-           (hint-face (if (and current-p (display-graphic-p))
-                          'custom-tab-bar-tab-hint
-                        'custom-tab-bar-tab-hint-inactive)))
+	   (tab-face (if (and current-p (display-graphic-p))
+			 'custom-tab-bar-tab
+		       'custom-tab-bar-tab-inactive))
+	   (hint-face (if (and current-p (display-graphic-p))
+			  'custom-tab-bar-tab-hint
+			'custom-tab-bar-tab-hint-inactive)))
       (concat (propertize (if tab-bar-tab-hints
 			      (format "  %d:" (- i 1))
 			    "  ")
-                          'face hint-face)
-              (propertize
-               (concat
-                (alist-get 'name tab)
-                (or (and tab-bar-close-button-show
-                         (not (eq tab-bar-close-button-show
-                                  (if current-p 'non-selected 'selected)))
-                         tab-bar-close-button)
-                    "")
-                "  ")
-               'face tab-face))))
+			  'face hint-face)
+	      (propertize
+	       (concat
+		(alist-get 'name tab)
+		(or (and tab-bar-close-button-show
+			 (not (eq tab-bar-close-button-show
+				  (if current-p 'non-selected 'selected)))
+			 tab-bar-close-button)
+		    "")
+		"  ")
+	       'face tab-face))))
   :config
-  (tab-bar-mode t)
-
-(use-package term
-  :config
-  ;; https://web.archive.org/web/20181111010613/ ->
-  ;; ->    http://paralambda.org/2012/07/02/using-gnu-emacs-as-a-terminal-emulator/
-  (defun term-handle-ansi-terminal-messages (message)
-    (while (string-match "\eAnSiT.+\n" message)
-      ;; Extract the command code and the argument.
-      (let* ((start (match-beginning 0))
-	     (command-code (aref message (+ start 6)))
-	     (argument
-	      (save-match-data
-		(substring message
-			   (+ start 8)
-			   (string-match "\r?\n" message
-					 (+ start 8))))))
-	;; Delete this command from MESSAGE.
-	(setq message (replace-match "" t t message))
-
-	(cond ((= command-code ?c)
-	       (setq term-ansi-at-dir argument))
-	      ((= command-code ?h)
-	       (setq term-ansi-at-host argument))
-	      ((= command-code ?u)
-	       (setq term-ansi-at-user argument))
-	      ((= command-code ?e)
-	       (save-excursion
-		 (find-file-other-window argument)))
-	      ((= command-code ?x)
-	       (save-excursion
-		 (find-file argument))))))
-
-    (when (and term-ansi-at-host term-ansi-at-dir term-ansi-at-user)
-      (setq buffer-file-name
-	    (format "%s@%s:%s" term-ansi-at-user term-ansi-at-host term-ansi-at-dir))
-      (set-buffer-modified-p nil)
-      (setq default-directory
-	    (if (string= term-ansi-at-host (system-name))
-		(concatenate 'string term-ansi-at-dir "/")
-	      (format "/%s@%s:%s/" term-ansi-at-user term-ansi-at-host term-ansi-at-dir))))
-    message)
-  (setq term-scroll-to-bottom-on-output t)
-  (setq term-suppress-hard-newline t)
-  :hook ((term-mode . (lambda ()
-			(linum-mode -1)
-			(setq-local global-hl-line-mode nil)))))
+  (tab-bar-mode t))
 
 (use-package terraform-mode)
 
@@ -515,7 +463,7 @@ Argument E should be the event that triggered this action."
   (set-face-attribute 'tab-bar nil :font "PragmataPro Mono Liga 13")
   (add-hook 'server-after-make-frame-hook
 	    (lambda ()
-	      (set-face-attribute 'tab-bar nil :font "PragmataPro Mono Liga 13"))))
+	      (set-face-attribute 'tab-bar nil :font "PragmataPro Mono Liga 13")))
   (global-auto-revert-mode 1)
   (fringe-mode '(0 . 0))
   (global-hl-line-mode 1)
@@ -529,9 +477,6 @@ Argument E should be the event that triggered this action."
   (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
   (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
   (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-  (bind-keys :prefix-map toggle-map
-	     :prefix "C-x t"
-	     ("f" . toggle-fold))
   :bind (("C-<down>" . gcm-scroll-down)
 	 ("C-<next>" . gcm-scroll-down)
 	 ("C-<up>" . gcm-scroll-up)
