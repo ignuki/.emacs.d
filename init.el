@@ -80,7 +80,7 @@ There are two things you can do about this warning:
     (define-key counsel-find-file-map alt  #'ivy-done))
   :bind (("M-x" . counsel-M-x)
 	 ("C-x C-f" . counsel-find-file))
-  :hook (find-file . (lambda () (linum-mode 1))))
+  :hook (find-file . (lambda () (display-line-numbers-mode 1))))
 
 (use-package dashboard
   :ensure t
@@ -118,7 +118,7 @@ There are two things you can do about this warning:
   (editorconfig-mode 1))
 
 (use-package eshell
-  :hook (eshell-mode . (lambda () (linum-mode -1))))
+  :hook (eshell-mode . (lambda () (display-line-numbers-mode -1))))
 
 (use-package evil
   :after (:all undo-tree)
@@ -203,38 +203,38 @@ Argument E should be the event that triggered this action."
 (use-package less-css-mode
   :mode ("\\.less\\'" . less-css-mode))
 
-(use-package linum
+(use-package display-line-numbers
   :init
-  (defvar linum-current-line 1 "Current line number.")
-  (defvar linum-format-fmt   "" " ")
-  (defvar linum-format "" " ")
-  (defface linum-current-line
-    `((t :inherit linum
+  (defvar display-line-numbers-current-line 1 "Current line number.")
+  (defvar display-line-numbers-format-fmt   "" " ")
+  (defvar display-line-numbers-format "" " ")
+  (defface display-line-numbers-current-line
+    `((t :inherit display-line-numbers
 	 :foreground "chocolate"
 	 :weight bold
 	 ))
     "Face for displaying the current line number."
-    :group 'linum)
+    :group 'display-line-numbers)
   :config
-  (defadvice linum-update (before advice-linum-update activate)
+  (defadvice display-line-numbers-update (before advice-display-line-numbers-update activate)
     "Set the current line."
-    (setq linum-current-line (line-number-at-pos)))
+    (setq display-line-numbers-current-line (line-number-at-pos)))
 
-  (defun custom-linum-numbering ()
-    (setq-local linum-format-fmt
+  (defun custom-display-line-numbers-numbering ()
+    (setq-local display-line-numbers-format-fmt
 		(let ((width
 		       (length (number-to-string (count-lines (point-min) (point-max))))))
 		  (concat " %" (number-to-string width) "d "))))
 
-  (defun linum-format-func (line)
+  (defun display-line-numbers-format-func (line)
     (let ((face
-	   (if (= line linum-current-line)
-	       'linum-current-line 'linum)))
-      (propertize (format linum-format-fmt line) 'face face)))
+	   (if (= line display-line-numbers-current-line)
+	       'display-line-numbers-current-line 'display-line-numbers)))
+      (propertize (format display-line-numbers-format-fmt line) 'face face)))
 
-  (setq linum-format 'linum-format-func)
-  (linum-mode t)
-  :hook (linum-before-numbering . custom-linum-numbering))
+  (setq display-line-numbers-format 'display-line-numbers-format-func)
+  (display-line-numbers-mode t)
+  :hook (display-line-numbers-before-numbering . custom-display-line-numbers-numbering))
 
 (use-package magit)
 
